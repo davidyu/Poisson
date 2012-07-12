@@ -66,13 +66,13 @@ namespace Poisson.Entities
 
         public override void Update(GameTime gameTime, List<Entity> entities, Entity player)
         {
-            
-            this.Pos += this.Vel;
-            this.Orient += this.AngVel;
-            //this.Vel *= FRICTION;
+            if (shipState == EShipState.SEEKING) {
+                this.Pos += this.Vel;
+                this.Orient += this.AngVel;
+                //this.Vel *= FRICTION;
+            }
 
-            if ((shipState == EShipState.SEEKING) && (gameTime.TotalGameTime.TotalMilliseconds >= this.timeToNextHook))
-            {
+            if ((shipState == EShipState.SEEKING) && (gameTime.TotalGameTime.TotalMilliseconds >= this.timeToNextHook)) {
                 setShipToHook();
             }
 
