@@ -73,7 +73,6 @@ namespace Poisson.Entities
             batch.Draw(this.SpriteTexture, this.Pos,
                 this.SpriteRect, Color.White,
                 this.Orient, new Vector2(0f, 0f), 1.0f, SpriteEffects.None, 0.0f);
-
         }
     }
 }
