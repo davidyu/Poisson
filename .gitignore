@@ -1,5 +1,7 @@
 *.cache
 bin
+obj
 *.exe
 *.dll
-*.nib`
+*.nib
+*.cachefile
