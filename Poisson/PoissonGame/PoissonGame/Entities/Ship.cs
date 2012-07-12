@@ -50,7 +50,8 @@ namespace Poisson.Entities
             }
 
             switch (this.hookState) {
-                case EHookState.UPDOWN:
+                case EHookState.UPDOWN: 
+
                     break;
                 default:
                     break;
