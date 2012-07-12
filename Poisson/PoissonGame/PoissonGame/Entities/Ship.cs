@@ -20,6 +20,7 @@ namespace Poisson.Entities
         const float BORING_HOOK_VEL = 5f;
         const int BOTTOM_OF_SCREEN = 400;
 
+        private Rectangle _hookSpriteRect;
         private Rectangle _hookRect;
 
         public Rectangle hookRect
@@ -46,7 +47,8 @@ namespace Poisson.Entities
         public override void Initialise(Game game)
         {
             SpriteTexture = game.Content.Load<Texture2D>("Art/spritesheet");
-            hookSprite = game.Content.Load<Texture2D>("Art/hook");
+            hookSprite = game.Content.Load<Texture2D>("Art/spritesheet");
+            this._hookSpriteRect = new Rectangle(0, 255, 16, 22);
             this.SpriteRect = new Rectangle(0, 0, 256, 164);
             this._hookRect = new Rectangle(0, 0, 40, 40);
             this.hookPos = new Vector2(this.Pos.X, this.Pos.Y);
@@ -118,7 +120,7 @@ namespace Poisson.Entities
                 this.SpriteRect, Color.White,
                 this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.4f);
             batch.Draw(this.hookSprite, this.Pos+this.hookPos,
-                this.hookRect, Color.White,
+                _hookSpriteRect, Color.White,
                 this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.3f);    
         }
     }
