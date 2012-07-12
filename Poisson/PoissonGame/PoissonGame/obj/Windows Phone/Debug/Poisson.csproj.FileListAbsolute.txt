@@ -12,9 +12,4 @@ C:\Users\RXIII\Documents\HELLO\Poisson\Poisson\PoissonGame\PoissonGame\obj\Windo
 bin\Windows Phone\Debug\
 C:\Users\RXIII\Documents\HELLO\Poisson\Poisson\PoissonGame\PoissonGame\bin\Windows Phone\Debug\WindowsPhoneGame1.xap
 C:\Users\RXIII\Documents\HELLO\Poisson\Poisson\PoissonGame\PoissonGame\obj\Windows Phone\Debug\XapCacheFile.xml
-C:\Users\RXIII\Documents\HELLO\Poisson\Poisson\PoissonGame\PoissonGame\bin\Windows Phone\Debug\WindowsPhoneGame1.xap
-C:\Users\RXIII\Documents\HELLO\Poisson\Poisson\PoissonGame\PoissonGame\obj\Windows Phone\Debug\XapCacheFile.xml
-C:\Users\RXIII\Documents\HELLO\Poisson\Poisson\PoissonGame\PoissonGame\bin\Windows Phone\Debug\AppManifest.xaml
-C:\Users\RXIII\Documents\HELLO\Poisson\Poisson\PoissonGame\PoissonGame\obj\Windows Phone\Debug\WMAppManifest.xml.g
-C:\Users\RXIII\Documents\HELLO\Poisson\Poisson\PoissonGame\PoissonGame\obj\Windows Phone\Debug\WMAppManifest.xml
-bin\Windows Phone\Debug\
+C:\Users\RXIII\Documents\HELLO\Poisson\Poisson\PoissonGame\PoissonGame\bin\Windows Phone\Debug\Content\Art\hook.xnb

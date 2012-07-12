@@ -57,7 +57,7 @@ namespace Poisson.Entities
                         {
                             Vector2 Vdif = new Vector2(tl.Position.X - this.Pos.X, tl.Position.Y - this.Pos.Y);
                             Vdif.Normalize(); //NORMALIZE THE VECTOR, HURRAH
-                            Vdif = new Vector2(Vdif.X * 6, Vdif.Y * 6);
+                            Vdif = new Vector2(Vdif.X * 10, Vdif.Y * 10);
                             this.Vel = Vdif;
                         }
                     }
