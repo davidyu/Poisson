@@ -35,8 +35,20 @@ namespace Poisson.Entities
             foreach (TouchLocation tl in touchCollection) {
                 if ((tl.State == TouchLocationState.Pressed)
                         || (tl.State == TouchLocationState.Moved)) {
-                            Vector2 targetOffset = tl.Position - this.Pos;
-                            //targetOffset.Ro
+                    //Vector2 targetOffset = tl.Position - this.Pos;
+                    //Vector2 targetRelative = MathUtils.RotateVector2(targetOffset, this.Orient);
+                    //Vector2 xAxis = new Vector2(1.0f, 0.0f);
+
+                    //if (targetRelative.Y > 0) {
+                    //    Debug.WriteLine("TOP");
+                    //}
+                    //else {
+                    //    Debug.WriteLine("BOT");
+                    //}
+
+                    //targetRelative.Normalize();
+                    //AngleBetweenVector2(targetRelative, xAxis)
+
                 }
             }
         }
