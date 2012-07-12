@@ -39,18 +39,24 @@ namespace Poisson
 
         protected override void Initialize()
         {
+            Random random = new Random();
             fishes = new List<Entity>();
             //fishes.Add(new Fish(new Vector2(400f, 0f), 0.0f));
 
             ships = new List<Entity>();
-            player = new Fish(new Vector2(400f, 0f), 1.72f); //player is Poisson and has different graphic than regular fishies
+            player = new Fish(new Vector2(400f, 0f), 0.0f, true); //player is Poisson and has different graphic than regular fishies
 
             ships.Add(new Ship(new Vector2(100f, 100f), 0.0f));
+
+            for (int i = 0; i < 3; i++)
+            {
+                fishes.Add(new Fish(new Vector2(random.Next(800), random.Next(480)), 0.0f, false)); //NEED TO INCLUDE MIniMUMS FOR THE SEA LATER
+            }
+
 
             foreach (Fish fish in fishes)
             {
                 fish.Initialise(this);
-                fish.isHuman = false;
             }
 
             foreach (Ship ship in ships)
@@ -59,7 +65,6 @@ namespace Poisson
             }
 
             player.Initialise(this);
-            player.isHuman = true;
 
             base.Initialize();
         }

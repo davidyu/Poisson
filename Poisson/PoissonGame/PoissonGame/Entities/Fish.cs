@@ -15,7 +15,10 @@ namespace Poisson.Entities
         const float FRICTION = 0.99f;
         public bool isTouching { get; set; }
         Vector2 userTouch { get; set; }
-
+        public bool inRoutine { get; set;}
+        GameTime routineStartTime {get; set;}
+        Vector2 targetPoint {get; set; }
+        
         public bool isHuman { get; set; }
 
         public Fish()
@@ -23,17 +26,30 @@ namespace Poisson.Entities
         {
         }
 
-        public Fish(Vector2 pos, float orient)
+        //public Fish(Vector2 pos, float orient)
+        //    : base(pos, orient)
+        //{
+        //}
+
+        public Fish(Vector2 pos, float orient, bool isHuman)
             : base(pos, orient)
         {
+            this.isHuman = isHuman;
+            inRoutine = true;
         }
 
         public override void Initialise(Game game)
         {
-
             TouchPanel.EnabledGestures = GestureType.Tap | GestureType.DoubleTap | GestureType.FreeDrag | GestureType.Hold | GestureType.HorizontalDrag | GestureType.VerticalDrag;
             this.SpriteTexture = game.Content.Load<Texture2D>("Art/spritesheet");
-            this.SpriteRect = new Rectangle(0, 164, 111, 64);
+            if (this.isHuman)
+            { 
+                this.SpriteRect = new Rectangle(0, 164, 111, 64); 
+            }
+            else
+            {
+                this.SpriteRect = new Rectangle(0, 228, 45, 28);
+            }
         }
 
         public override void Update(GameTime gameTime, List<Entity> entities, Entity player)
@@ -48,18 +64,17 @@ namespace Poisson.Entities
                         
                         isTouching = true;
                         Debug.WriteLine(tl.Position.X.ToString() + " " + tl.Position.Y.ToString()); //debug line
-                        if (this.SpriteRect.Contains((int)(this.Pos.X), (int)(this.Pos.Y)) || (tl.Position.X.CompareTo(this.Pos.X) == 0 && tl.Position.X.CompareTo(this.Pos.Y) == 0))
-                        {
-                            this.Vel = new Vector2(0, 0);
-                        }
-
-                        else
-                        {
+                        //if (this.SpriteRect.Contains((int)(this.Pos.X), (int)(this.Pos.Y)) || (tl.Position.X.CompareTo(this.Pos.X) == 0 && tl.Position.X.CompareTo(this.Pos.Y) == 0))
+                        //{
+                        //    this.Vel = new Vector2(0, 0);
+                        //}
+                        //else
+                        //{
                             Vector2 Vdif = new Vector2(tl.Position.X - this.Pos.X, tl.Position.Y - this.Pos.Y);
                             Vdif.Normalize(); //NORMALIZE THE VECTOR, HURRAH
                             Vdif = new Vector2(Vdif.X * 10, Vdif.Y * 10);
                             this.Vel = Vdif;
-                        }
+                        //}
                     }
                     else //no touch on screen, reset all userfish velocities
                     {
@@ -67,12 +82,56 @@ namespace Poisson.Entities
                     }
                 }
             }
-            else //other fish
+            else //other little fishies
             {
                 //if they're within the radius of the human fishy, change attributes accordingly
-                //if (this.Pos.X - 
+                if (Math.Abs(this.Pos.X - player.Pos.X) < 50 && Math.Abs(this.Pos.Y - player.Pos.Y) < 50)
+                {
+                    inRoutine = false;
+                    Vector2 Vdif = new Vector2(player.Pos.X - this.Pos.X, player.Pos.Y - this.Pos.Y);
+                    Vdif.Normalize();
+                    Vdif = new Vector2(Vdif.X * 3, Vdif.Y * 3);
+                    this.Vel = Vdif;
+                }
+                else
+                {
+                    if (inRoutine)
+                    {
+                        if (routineStartTime != null)
+                        {
+                            if (gameTime.TotalGameTime.TotalSeconds - routineStartTime.TotalGameTime.TotalSeconds < 10) //DON'T MOVE FISHY
+                            {
+                                this.Vel = new Vector2(0, 0);
+                            }
+                            else //time to move!
+                            {
+                                Random random = new Random();
+                                if ((gameTime.TotalGameTime.TotalSeconds - routineStartTime.TotalGameTime.TotalSeconds < 30) || this.Pos == targetPoint)
+                                {
+                                    this.Vel = new Vector2(0, 0);
+                                    inRoutine = false;
+                                }
+                                else if (this.Vel.X.Equals(0) || this.Vel.Y.Equals(0)) //freshly moving, set the target move point
+                                {
+                                    targetPoint = new Vector2(random.Next(800), random.Next(480));
+                                    Vector2 newVel = targetPoint;
+                                    newVel.Normalize();
+                                    this.Vel = new Vector2(newVel.X, newVel.Y);
+                                }
+                                else //move to target location
+                                {
+                                }
+                            }
+                        }
 
-                //else, do regular updates
+                    }
+                    else //start the AI routine
+                    {
+                        inRoutine = true;
+                        routineStartTime = gameTime;
+                        this.Vel = new Vector2(0, 0);
+                    }
+                }
 
                 
             }
@@ -80,6 +139,20 @@ namespace Poisson.Entities
             this.Pos += this.Vel;
             this.Orient += this.AngVel;
             this.Vel *= FRICTION;
+        }
+
+
+        public void Routine(GameTime gameTime)
+        {
+            if (gameTime.TotalGameTime.TotalSeconds - routineStartTime.TotalGameTime.TotalSeconds < 10) //DON'T MOVE FISHY
+            {
+                this.Vel = new Vector2(0,0);
+            }
+            else
+            {
+                Random random = new Random();
+            }
+
         }
 
         public override void Render(GameTime gameTime, SpriteBatch batch)
