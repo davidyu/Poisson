@@ -17,10 +17,16 @@ namespace Poisson.Entities
         int timeToNextHook;
 
         const float FRICTION = 0.99f;
-        const float BORING_HOOK_VEL = 3f;
+        const float BORING_HOOK_VEL = 5f;
         const int BOTTOM_OF_SCREEN = 400;
 
-        Rectangle hookRect;
+        private Rectangle _hookRect;
+
+        public Rectangle hookRect
+        {
+            get { return new Rectangle((int) hookPos.X + (int) Pos.X, (int) Pos.Y + (int) hookPos.Y, this._hookRect.Width, this._hookRect.Width); }
+        }
+
         Vector2 hookPos;
         EHookState hookState;
         EShipState shipState;
@@ -42,7 +48,7 @@ namespace Poisson.Entities
             SpriteTexture = game.Content.Load<Texture2D>("Art/spritesheet");
             hookSprite = game.Content.Load<Texture2D>("Art/hook");
             this.SpriteRect = new Rectangle(0, 0, 256, 164);
-            this.hookRect = new Rectangle(0, 0, 40, 40);
+            this._hookRect = new Rectangle(0, 0, 40, 40);
             this.hookPos = new Vector2(this.Pos.X, this.Pos.Y);
             this.hookState = EHookState.DOWN;
             this.Vel = new Vector2(3.0f, 0.0f);

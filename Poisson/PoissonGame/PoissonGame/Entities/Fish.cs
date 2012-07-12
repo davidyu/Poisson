@@ -26,6 +26,7 @@ namespace Poisson.Entities
         public Fish(Vector2 pos, float orient)
             : base(pos, orient)
         {
+            
         }
 
         public override void Initialise(Game game)
@@ -34,6 +35,7 @@ namespace Poisson.Entities
             TouchPanel.EnabledGestures = GestureType.Tap | GestureType.DoubleTap | GestureType.FreeDrag | GestureType.Hold | GestureType.HorizontalDrag | GestureType.VerticalDrag;
             this.SpriteTexture = game.Content.Load<Texture2D>("Art/spritesheet");
             this.SpriteRect = new Rectangle(0, 164, 111, 64);
+            this.BoundingRect = new Rectangle(0, 0, 164, 64);
         }
 
         public override void Update(GameTime gameTime, List<Entity> entities, Entity player)
