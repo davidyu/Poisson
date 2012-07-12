@@ -19,13 +19,12 @@ namespace Poisson
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Dictionary<string, Animation> animations = new Dictionary<string,Animation>(); 
+        Dictionary<string, Animation> animations = new Dictionary<string, Animation>();
 
         // Game Properties
         List<Entity> fishes;
         List<Entity> ships;
         Fish player;
-
 
         public PoissonGame()
         {
@@ -42,7 +41,6 @@ namespace Poisson
         protected override void Initialize()
         {
             fishes = new List<Entity>();
-
             //fishes.Add(new Fish(new Vector2(400f, 0f), 0.0f));
 
             ships = new List<Entity>();
@@ -51,15 +49,19 @@ namespace Poisson
 
             ships.Add(new Ship(new Vector2(100f, 100f), 0.0f));
 
-            foreach (Fish fish in fishes) {
+            foreach (Fish fish in fishes)
+            {
                 fish.Initialise(this);
+                fish.isHuman = false;
             }
 
-            foreach (Ship ship in ships) {
+            foreach (Ship ship in ships)
+            {
                 ship.Initialise(this);
             }
 
             player.Initialise(this);
+            player.isHuman = true;
 
             base.Initialize();
         }
@@ -92,16 +94,12 @@ namespace Poisson
                 foreach (Ship ship in ships) {
                     if (fish.BoundingRect.Intersects(ship.hookRect))
                     {
-                        Debug.WriteLine("hit!");
+                        //hit! do stuff here
                     }
                 }
-
-                
-
             }
 
             foreach (Ship ship in ships) {
-                Debug.WriteLine(ship.hookRect);
                 ship.Update(gameTime, fishes, player);
             }
 
@@ -116,15 +114,17 @@ namespace Poisson
         {
             spriteBatch.Begin();
 
-                foreach (Fish fish in fishes) {
-                    fish.Render(gameTime, this.spriteBatch);
-                }
+            foreach (Fish fish in fishes)
+            {
+                fish.Render(gameTime, this.spriteBatch);
+            }
 
-                foreach (Ship ship in ships) {
-                    ship.Render(gameTime, this.spriteBatch);
-                }
+            foreach (Ship ship in ships)
+            {
+                ship.Render(gameTime, this.spriteBatch);
+            }
 
-                player.Render(gameTime, this.spriteBatch);
+            player.Render(gameTime, this.spriteBatch);
 
             spriteBatch.End();
 
