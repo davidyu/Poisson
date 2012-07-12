@@ -26,6 +26,7 @@ namespace Poisson.Entities
             this.Orient = orient;
         }
 
+        public abstract void Initialise(Game game);
 
         public abstract void Update(GameTime gameTime, List<Entity> entities, Entity player);
 
