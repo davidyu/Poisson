@@ -11,6 +11,7 @@ namespace Poisson.Entities
     class Fish : Entity
     {
         const float FRICTION = 0.99f;
+        bool isHuman = false;
 
         public Fish() : base()
         {
@@ -31,6 +32,10 @@ namespace Poisson.Entities
             this.Pos += this.Vel;
             this.Orient += this.AngVel;
             this.Vel *= FRICTION;
+
+            if (isHuman) {
+            } else {
+            }
         }
 
         public override void Render(GameTime gameTime, SpriteBatch batch)

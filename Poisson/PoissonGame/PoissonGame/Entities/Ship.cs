@@ -15,6 +15,7 @@ namespace Poisson.Entities
 
         Rectangle hookRect;
         Vector2 hookPos;
+        EHookState hookState;
         
         
 
@@ -46,6 +47,13 @@ namespace Poisson.Entities
             if (this.Pos.X < 0.0f || this.Pos.X > 600) {
                 this.Vel *= -1.0f;
                 this.Facing = !this.Facing;
+            }
+
+            switch (this.hookState) {
+                case EHookState.UPDOWN:
+                    break;
+                default:
+                    break;
             }
         }
 
