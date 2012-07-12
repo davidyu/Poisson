@@ -2,6 +2,7 @@ namespace Poisson
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Audio;
@@ -45,7 +46,8 @@ namespace Poisson
             //fishes.Add(new Fish(new Vector2(400f, 0f), 0.0f));
 
             ships = new List<Entity>();
-            player = new Fish(new Vector2(400f, 0f), 1.72f); //player is Poisson and has different graphic than regular fishies
+            player = new Fish(new Vector2(400f, 200f), 1.72f); //player is Poisson and has different graphic than regular fishies
+            fishes.Add(player);
 
             ships.Add(new Ship(new Vector2(100f, 100f), 0.0f));
 
@@ -82,9 +84,24 @@ namespace Poisson
 
             foreach (Fish fish in fishes) {
                 fish.Update(gameTime, ships, player);
+                
+                /*
+                 * COLLISION DETECTION IS HERE
+                 */
+
+                foreach (Ship ship in ships) {
+                    if (fish.BoundingRect.Intersects(ship.hookRect))
+                    {
+                        Debug.WriteLine("hit!");
+                    }
+                }
+
+                
+
             }
 
             foreach (Ship ship in ships) {
+                Debug.WriteLine(ship.hookRect);
                 ship.Update(gameTime, fishes, player);
             }
 
@@ -92,6 +109,8 @@ namespace Poisson
 
             base.Update(gameTime);
         }
+
+
 
         protected override void Draw(GameTime gameTime)
         {
