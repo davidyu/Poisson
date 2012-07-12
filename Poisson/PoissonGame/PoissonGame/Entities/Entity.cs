@@ -14,6 +14,7 @@ namespace Poisson.Entities
         public Vector2 Vel { get; set; }
         public float Orient { get; set; }
         public float AngVel { get; set; }
+        public bool Facing { get; set; }
 
         public Texture2D SpriteTexture { get; set; }
         public Rectangle SpriteRect { get; set; }

@@ -57,9 +57,3 @@ C:\code\projects\csharp\Poisson\Poisson\PoissonGame\PoissonGame\bin\Windows Phon
 C:\code\projects\csharp\Poisson\Poisson\PoissonGame\PoissonGame\obj\Windows Phone\Debug\XapCacheFile.xml
 C:\code\projects\csharp\Poisson\Poisson\PoissonGame\PoissonGame\bin\Windows Phone\Debug\Content\Art\Environment.xnb
 C:\code\projects\csharp\Poisson\Poisson\PoissonGame\PoissonGame\bin\Windows Phone\Debug\Content\Art\Spritesheet.xnb
-C:\code\projects\csharp\Poisson\Poisson\PoissonGame\PoissonGame\bin\Windows Phone\Debug\WindowsPhoneGame1.xap
-C:\code\projects\csharp\Poisson\Poisson\PoissonGame\PoissonGame\obj\Windows Phone\Debug\XapCacheFile.xml
-C:\code\projects\csharp\Poisson\Poisson\PoissonGame\PoissonGame\bin\Windows Phone\Debug\AppManifest.xaml
-C:\code\projects\csharp\Poisson\Poisson\PoissonGame\PoissonGame\obj\Windows Phone\Debug\WMAppManifest.xml.g
-C:\code\projects\csharp\Poisson\Poisson\PoissonGame\PoissonGame\obj\Windows Phone\Debug\WMAppManifest.xml
-bin\Windows Phone\Debug\
