@@ -110,10 +110,10 @@ namespace Poisson.Entities
             //batch.Draw(this.SpriteTexture, this.Pos, Color.White);
             batch.Draw(this.SpriteTexture, this.Pos,
                 this.SpriteRect, Color.White,
-                this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.0f);
+                this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.4f);
             batch.Draw(this.hookSprite, this.Pos+this.hookPos,
                 this.hookRect, Color.White,
-                this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.0f);    
+                this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.3f);    
         }
     }
 }

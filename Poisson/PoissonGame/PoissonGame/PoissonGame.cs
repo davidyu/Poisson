@@ -23,6 +23,7 @@ namespace Poisson
         // Game Properties
         List<Entity> fishes;
         List<Entity> ships;
+        List<Entity> seas;
         Fish player;
 
         public PoissonGame()
@@ -44,8 +45,11 @@ namespace Poisson
 
             ships = new List<Entity>();
             player = new Fish(new Vector2(400f, 0f), 1.72f); //player is Poisson and has different graphic than regular fishies
+            seas = new List<Entity>();
 
             ships.Add(new Ship(new Vector2(100f, 100f), 0.0f));
+            seas.Add(new Sea(new Vector2(0.0f, 0.0f), new Vector2(10.0f, 0.0f), 0.5f));
+            seas.Add(new Sea(new Vector2(0.0f, 0.0f), new Vector2(10.0f, 0.0f), 1.5f));
 
             foreach (Fish fish in fishes)
             {
@@ -56,6 +60,10 @@ namespace Poisson
             foreach (Ship ship in ships)
             {
                 ship.Initialise(this);
+            }
+
+            foreach (Sea sea in seas) {
+                sea.Initialise(this);
             }
 
             player.Initialise(this);
@@ -92,6 +100,10 @@ namespace Poisson
                 ship.Update(gameTime, fishes, player);
             }
 
+            foreach (Sea sea in this.seas) {
+                sea.Update(gameTime, fishes, player);
+            }
+
             player.Update(gameTime, ships, player);
 
             base.Update(gameTime);
@@ -99,7 +111,7 @@ namespace Poisson
 
         protected override void Draw(GameTime gameTime)
         {
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
 
             foreach (Fish fish in fishes)
             {
@@ -109,6 +121,9 @@ namespace Poisson
             foreach (Ship ship in ships)
             {
                 ship.Render(gameTime, this.spriteBatch);
+            }
+            foreach (Sea sea in this.seas) {
+                sea.Render(gameTime, this.spriteBatch);
             }
 
             player.Render(gameTime, this.spriteBatch);
