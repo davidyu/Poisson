@@ -1,3 +1,0 @@
-Content\Art\Environment.xnb
-Content\Art\Spritesheet.xnb
-Content\Art\hook.xnb
