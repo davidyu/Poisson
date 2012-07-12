@@ -42,12 +42,10 @@ namespace Poisson
         {
             fishes = new List<Entity>();
 
-            fishes.Add(new Fish(new Vector2(400f, 0f), 0.0f));
+            //fishes.Add(new Fish(new Vector2(400f, 0f), 0.0f));
 
             ships = new List<Entity>();
-            player = new Fish(); //player is Poisson and has different graphic than regular fishies
-
-            
+            player = new Fish(new Vector2(400f, 0f), 1.72f); //player is Poisson and has different graphic than regular fishies
 
             ships.Add(new Ship(new Vector2(100f, 100f), 0.0f));
 

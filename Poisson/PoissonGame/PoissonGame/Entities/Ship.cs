@@ -12,6 +12,9 @@ namespace Poisson.Entities
     {
         const float FRICTION = 0.99f;
 
+        Rectangle hookRect;
+        Vector2 hookPos;
+
         public Ship() : base()
         {
         }
@@ -25,6 +28,8 @@ namespace Poisson.Entities
         {
             SpriteTexture = game.Content.Load<Texture2D>("Art/spritesheet");
             this.SpriteRect = new Rectangle(0, 0, 256, 164);
+            this.hookRect = new Rectangle(0, 0, 40, 40);
+            this.hookPos = new Vector2(this.Pos.X, this.Pos.Y);
         }
 
         public override void Update(GameTime gameTime, List<Entity> entities, Entity player)
@@ -32,6 +37,8 @@ namespace Poisson.Entities
             this.Pos += this.Vel;
             this.Orient += this.AngVel;
             this.Vel *= FRICTION;
+
+
         }
 
         public override void Render(GameTime gameTime, SpriteBatch batch)
