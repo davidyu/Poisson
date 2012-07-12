@@ -1,1 +1,0 @@
-C:\code\projects\csharp\Poisson\Poisson\PoissonGame\PoissonContent\obj\Windows Phone\Debug\ResolveAssemblyReference.cache
