@@ -1,23 +1,30 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Input.Touch;
-using Microsoft.Xna.Framework.Media;
-using System.Xml.Linq;
-
 namespace Poisson
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Audio;
+    using Microsoft.Xna.Framework.Content;
+    using Microsoft.Xna.Framework.GamerServices;
+    using Microsoft.Xna.Framework.Graphics;
+    using Microsoft.Xna.Framework.Input;
+    using Microsoft.Xna.Framework.Input.Touch;
+    using Microsoft.Xna.Framework.Media;
+    using System.Xml.Linq;
+    using Poisson.Entity;
+
     public class PoissonGame : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Dictionary<string, Animation> animations = new Dictionary<string,Animation>();
+
+        // Game Properties
+        List<Fish> fishes;
+        List<Ship> ships;
+        Fish player;
+
 
         public PoissonGame()
         {
@@ -39,7 +46,9 @@ namespace Poisson
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            fishes = new List<Fish>();
+            ships = new List<Ship>();
+            player = new Fish();
 
             base.Initialize();
         }
@@ -64,11 +73,6 @@ namespace Poisson
             // TODO: Unload any non ContentManager content here
         }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit
@@ -80,19 +84,14 @@ namespace Poisson
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
            {
                 graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
                 spriteBatch.Begin();
-                Vector2 pos = new Vector2(0.0f, 10.0f);
-                spriteBatch.Draw(SpriteTexture, pos, Color.White);
+                    Vector2 pos = new Vector2(0.0f, 10.0f);
+                    spriteBatch.Draw(SpriteTexture, pos, Color.White);
                 spriteBatch.End();
-                base.Draw(gameTime);
             }
 
             base.Draw(gameTime);
