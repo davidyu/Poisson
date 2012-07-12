@@ -12,7 +12,7 @@ namespace Poisson
     using Microsoft.Xna.Framework.Input.Touch;
     using Microsoft.Xna.Framework.Media;
     using System.Xml.Linq;
-    using Poisson.Entity;
+    using Poisson.Entities;
 
     public class PoissonGame : Microsoft.Xna.Framework.Game
     {
@@ -21,8 +21,8 @@ namespace Poisson
         Dictionary<string, Animation> animations = new Dictionary<string,Animation>();
 
         // Game Properties
-        List<Fish> fishes;
-        List<Ship> ships;
+        List<Entity> fishes;
+        List<Entity> ships;
         Fish player;
 
 
@@ -38,16 +38,10 @@ namespace Poisson
             InactiveSleepTime = TimeSpan.FromSeconds(1);
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
         protected override void Initialize()
         {
-            fishes = new List<Fish>();
-            ships = new List<Ship>();
+            fishes = new List<Entity>();
+            ships = new List<Entity>();
             player = new Fish();
 
             base.Initialize();
@@ -59,15 +53,11 @@ namespace Poisson
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-             SpriteTexture = Content.Load<Texture2D>("Textures/Ammo/rock_ammo");
+            SpriteTexture = Content.Load<Texture2D>("Textures/Ammo/rock_ammo");
 
             // TODO: use this.Content to load your game content here
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
@@ -79,7 +69,15 @@ namespace Poisson
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            // TODO: Add your update logic here
+            foreach (Fish fish in fishes) {
+
+            }
+
+            foreach (Ship ship in ships) {
+
+            }
+
+            player.Update(gameTime, ships, player);
 
             base.Update(gameTime);
         }
