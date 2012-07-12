@@ -83,7 +83,7 @@ namespace Poisson.Entities
                 this.SpriteRect, Color.White,
                 this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.0f);
             batch.Draw(this.hookSprite, this.Pos+this.hookPos,
-                this.SpriteRect, Color.White,
+                this.hookRect, Color.White,
                 this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.0f);    
         }
     }
