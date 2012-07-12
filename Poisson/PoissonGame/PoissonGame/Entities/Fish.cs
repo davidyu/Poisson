@@ -34,14 +34,19 @@ namespace Poisson.Entities
         public Fish(Vector2 pos, float orient, bool isHuman)
             : base(pos, orient)
         {
+<<<<<<< HEAD
             this.isHuman = isHuman;
             inRoutine = true;
+=======
+            
+>>>>>>> e75e7f41e8e0577c01d7a0a228d21bd94a7dc4fd
         }
 
         public override void Initialise(Game game)
         {
             TouchPanel.EnabledGestures = GestureType.Tap | GestureType.DoubleTap | GestureType.FreeDrag | GestureType.Hold | GestureType.HorizontalDrag | GestureType.VerticalDrag;
             this.SpriteTexture = game.Content.Load<Texture2D>("Art/spritesheet");
+<<<<<<< HEAD
             if (this.isHuman)
             { 
                 this.SpriteRect = new Rectangle(0, 164, 111, 64); 
@@ -50,6 +55,10 @@ namespace Poisson.Entities
             {
                 this.SpriteRect = new Rectangle(0, 228, 45, 28);
             }
+=======
+            this.SpriteRect = new Rectangle(0, 164, 111, 64);
+            this.BoundingRect = new Rectangle(0, 0, 164, 64);
+>>>>>>> e75e7f41e8e0577c01d7a0a228d21bd94a7dc4fd
         }
 
         public override void Update(GameTime gameTime, List<Entity> entities, Entity player)

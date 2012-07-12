@@ -2,6 +2,7 @@ namespace Poisson
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Audio;
@@ -19,10 +20,15 @@ namespace Poisson
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Dictionary<string, Animation> animations = new Dictionary<string, Animation>();
+        
 
         // Game Properties
+        int score = 0;
+        SpriteFont hudFont;
+
         List<Entity> fishes;
         List<Entity> ships;
+        List<Entity> seas;
         Fish player;
 
         public PoissonGame()
@@ -41,12 +47,22 @@ namespace Poisson
         {
             Random random = new Random();
             fishes = new List<Entity>();
-            //fishes.Add(new Fish(new Vector2(400f, 0f), 0.0f));
+            hudFont = Content.Load<SpriteFont>("HUDFont");
 
             ships = new List<Entity>();
+<<<<<<< HEAD
             player = new Fish(new Vector2(400f, 0f), 0.0f, true); //player is Poisson and has different graphic than regular fishies
+=======
 
-            ships.Add(new Ship(new Vector2(100f, 100f), 0.0f));
+            player = new Fish(new Vector2(400f, 0f), 1.72f); //player is Poisson and has different graphic than regular fishies
+            seas = new List<Entity>();
+            player = new Fish(new Vector2(400f, 200f), 1.72f); //player is Poisson and has different graphic than regular fishies
+            fishes.Add(player);
+>>>>>>> e75e7f41e8e0577c01d7a0a228d21bd94a7dc4fd
+
+            ships.Add(new Ship(new Vector2(100f, 50f), 0.0f));
+            seas.Add(new Sea(new Vector2(0.0f, 50.0f), new Vector2(10.0f, 0.0f), 0.5f));
+            seas.Add(new Sea(new Vector2(0.0f, 150.0f), new Vector2(-10.0f, 0.0f), 0.39f));
 
             for (int i = 0; i < 3; i++)
             {
@@ -62,6 +78,10 @@ namespace Poisson
             foreach (Ship ship in ships)
             {
                 ship.Initialise(this);
+            }
+
+            foreach (Sea sea in seas) {
+                sea.Initialise(this);
             }
 
             player.Initialise(this);
@@ -87,14 +107,31 @@ namespace Poisson
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            foreach (Fish fish in fishes)
-            {
+            score = (int)gameTime.TotalGameTime.TotalMilliseconds * 7;
+            
+
+
+            foreach (Fish fish in fishes) {
                 fish.Update(gameTime, ships, player);
+                
+                /*
+                 * COLLISION DETECTION IS HERE
+                 */
+
+                foreach (Ship ship in ships) {
+                    if (fish.BoundingRect.Intersects(ship.hookRect))
+                    {
+                        //hit! do stuff here
+                    }
+                }
             }
 
-            foreach (Ship ship in ships)
-            {
+            foreach (Ship ship in ships) {
                 ship.Update(gameTime, fishes, player);
+            }
+
+            foreach (Sea sea in this.seas) {
+                sea.Update(gameTime, fishes, player);
             }
 
             player.Update(gameTime, ships, player);
@@ -102,9 +139,13 @@ namespace Poisson
             base.Update(gameTime);
         }
 
+
+
         protected override void Draw(GameTime gameTime)
         {
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+
+            this.spriteBatch.DrawString(hudFont, score.ToString(), new Vector2(0f, 0f), Color.Black);
 
             foreach (Fish fish in fishes)
             {
@@ -114,6 +155,9 @@ namespace Poisson
             foreach (Ship ship in ships)
             {
                 ship.Render(gameTime, this.spriteBatch);
+            }
+            foreach (Sea sea in this.seas) {
+                sea.Render(gameTime, this.spriteBatch);
             }
 
             player.Render(gameTime, this.spriteBatch);

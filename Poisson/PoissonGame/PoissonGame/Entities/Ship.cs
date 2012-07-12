@@ -17,10 +17,17 @@ namespace Poisson.Entities
         int timeToNextHook;
 
         const float FRICTION = 0.99f;
-        const float BORING_HOOK_VEL = 3f;
+        const float BORING_HOOK_VEL = 5f;
         const int BOTTOM_OF_SCREEN = 400;
 
-        Rectangle hookRect;
+        private Rectangle _hookSpriteRect;
+        private Rectangle _hookRect;
+
+        public Rectangle hookRect
+        {
+            get { return new Rectangle((int) hookPos.X + (int) Pos.X, (int) Pos.Y + (int) hookPos.Y, this._hookRect.Width, this._hookRect.Width); }
+        }
+
         Vector2 hookPos;
         EHookState hookState;
         EShipState shipState;
@@ -40,9 +47,10 @@ namespace Poisson.Entities
         public override void Initialise(Game game)
         {
             SpriteTexture = game.Content.Load<Texture2D>("Art/spritesheet");
-            hookSprite = game.Content.Load<Texture2D>("Art/hook");
+            hookSprite = game.Content.Load<Texture2D>("Art/spritesheet");
+            this._hookSpriteRect = new Rectangle(0, 255, 16, 22);
             this.SpriteRect = new Rectangle(0, 0, 256, 164);
-            this.hookRect = new Rectangle(0, 0, 40, 40);
+            this._hookRect = new Rectangle(0, 0, 40, 40);
             this.hookPos = new Vector2(this.Pos.X, this.Pos.Y);
             this.hookState = EHookState.DOWN;
             this.Vel = new Vector2(3.0f, 0.0f);
@@ -110,10 +118,10 @@ namespace Poisson.Entities
             //batch.Draw(this.SpriteTexture, this.Pos, Color.White);
             batch.Draw(this.SpriteTexture, this.Pos,
                 this.SpriteRect, Color.White,
-                this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.0f);
+                this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.4f);
             batch.Draw(this.hookSprite, this.Pos+this.hookPos,
-                this.hookRect, Color.White,
-                this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.0f);    
+                _hookSpriteRect, Color.White,
+                this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.3f);    
         }
     }
 }

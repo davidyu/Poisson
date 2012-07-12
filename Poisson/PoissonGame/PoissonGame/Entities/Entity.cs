@@ -8,7 +8,7 @@ namespace Poisson.Entities
     using Microsoft.Xna.Framework.Graphics;
     using Poisson.Utility;
 
-    abstract class Entity
+    class Entity
     {
         public Vector2 Pos { get; set; }  
         public Vector2 Vel { get; set; }
@@ -18,7 +18,13 @@ namespace Poisson.Entities
 
         public Texture2D SpriteTexture { get; set; }
         public Rectangle SpriteRect { get; set; }
-        public Rectangle BoundingRect { get; set; }
+
+        private Rectangle _bRect;
+
+        public Rectangle BoundingRect { 
+            get { return (new Rectangle((int)Pos.X, (int)Pos.Y, _bRect.Width, _bRect.Height)); }
+            set { _bRect = value; }
+        }
 
         public Entity() { }
         public Entity(Vector2 pos, float orient)
@@ -27,11 +33,11 @@ namespace Poisson.Entities
             this.Orient = orient;
         }
 
-        public abstract void Initialise(Game game);
+        public virtual void Initialise(Game game) {}
 
-        public abstract void Update(GameTime gameTime, List<Entity> entities, Entity player);
+        public virtual void Update(GameTime gameTime, List<Entity> entities, Entity player) {}
 
-        public abstract void Render(GameTime gameTime, SpriteBatch batch);
+        public virtual void Render(GameTime gameTime, SpriteBatch batch) {}
 
         
     }
