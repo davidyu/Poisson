@@ -1,0 +1,2 @@
+Content\Art\Environment.xnb
+Content\Art\Spritesheet.xnb
