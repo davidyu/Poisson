@@ -7,6 +7,8 @@ namespace Poisson.Entities
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
     using Poisson.Utility;
+    using Microsoft.Xna.Framework.Input.Touch;
+    using System.Diagnostics;
 
     class Fish : Entity
     {
@@ -27,6 +29,18 @@ namespace Poisson.Entities
             this.SpriteRect = new Rectangle(0, 164, 111, 64);
         }
 
+        public void HandleInput()
+        {
+            TouchCollection touchCollection = TouchPanel.GetState();
+            foreach (TouchLocation tl in touchCollection) {
+                if ((tl.State == TouchLocationState.Pressed)
+                        || (tl.State == TouchLocationState.Moved)) {
+                            Vector2 targetOffset = tl.Position - this.Pos;
+                            //targetOffset.Ro
+                }
+            }
+        }
+
         public override void Update(GameTime gameTime, List<Entity> entities, Entity player)
         {
             this.Pos += this.Vel;
@@ -34,7 +48,9 @@ namespace Poisson.Entities
             this.Vel *= FRICTION;
 
             if (isHuman) {
+                HandleInput();
             } else {
+                HandleInput();
             }
         }
 
