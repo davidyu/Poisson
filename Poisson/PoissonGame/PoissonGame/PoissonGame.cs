@@ -56,7 +56,7 @@ namespace Poisson
             fishes.Add(player);
 
             ships.Add(new Ship(new Vector2(100f, 50f), 0.0f));
-            seas.Add(new Sea(new Vector2(0.0f, 50.0f), new Vector2(10.0f, 0.0f), 0.5f));
+            //seas.Add(new Sea(new Vector2(0.0f, 50.0f), new Vector2(10.0f, 0.0f), 0.5f));
             seas.Add(new Sea(new Vector2(0.0f, 150.0f), new Vector2(-10.0f, 0.0f), 0.39f));
 
             foreach (Fish fish in fishes)
@@ -134,6 +134,7 @@ namespace Poisson
 
         protected override void Draw(GameTime gameTime)
         {
+            graphics.GraphicsDevice.Clear(new Color(219, 237, 212));
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
 
             this.spriteBatch.DrawString(hudFont, score.ToString(), new Vector2(0f, 0f), Color.Black);

@@ -19,6 +19,8 @@ namespace Poisson.Entities
         const float FRICTION = 0.99f;
         const float BORING_HOOK_VEL = 5f;
         const int BOTTOM_OF_SCREEN = 400;
+        const int TOP_OF_ROD = -20;
+        const int ROD_OFFSET = 100;
 
         private Rectangle _hookSpriteRect;
         private Rectangle _hookRect;
@@ -51,7 +53,7 @@ namespace Poisson.Entities
             this._hookSpriteRect = new Rectangle(0, 255, 16, 22);
             this.SpriteRect = new Rectangle(0, 0, 256, 164);
             this._hookRect = new Rectangle(0, 0, 40, 40);
-            this.hookPos = new Vector2(this.Pos.X, this.Pos.Y);
+            this.hookPos = new Vector2(this.Pos.X + ROD_OFFSET, this.Pos.Y);
             this.hookState = EHookState.DOWN;
             this.Vel = new Vector2(3.0f, 0.0f);
             this.Facing = true;
@@ -92,7 +94,7 @@ namespace Poisson.Entities
             switch (this.hookState) {
                 case EHookState.UP:
                     this.hookPos.Y -= BORING_HOOK_VEL;
-                    if (this.hookPos.Y <= this.Pos.Y) {
+                    if (this.hookPos.Y <= TOP_OF_ROD) {
                         this.hookState = EHookState.RETRACTED;
                         setShipToSeek(gameTime);
                     }
@@ -119,7 +121,7 @@ namespace Poisson.Entities
             batch.Draw(this.SpriteTexture, this.Pos,
                 this.SpriteRect, Color.White,
                 this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.4f);
-            batch.Draw(this.hookSprite, this.Pos+this.hookPos,
+            batch.Draw(this.hookSprite, this.Facing ? this.Pos + this.hookPos : this.Pos - this.hookPos,
                 _hookSpriteRect, Color.White,
                 this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.3f);    
         }
