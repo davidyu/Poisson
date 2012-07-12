@@ -18,7 +18,7 @@ namespace Poisson
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Dictionary<string, Animation> animations = new Dictionary<string,Animation>();
+        Dictionary<string, Animation> animations = new Dictionary<string,Animation>(); 
 
         // Game Properties
         List<Entity> fishes;
@@ -29,7 +29,7 @@ namespace Poisson
         public PoissonGame()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
+            this.Content.RootDirectory = "Content";
 
             // Frame rate is 30 fps by default for Windows Phone.
             TargetElapsedTime = TimeSpan.FromTicks(333333);
@@ -41,8 +41,25 @@ namespace Poisson
         protected override void Initialize()
         {
             fishes = new List<Entity>();
+
+            fishes.Add(new Fish(new Vector2(400f, 0f), 0.0f));
+
             ships = new List<Entity>();
-            player = new Fish();
+            player = new Fish(); //player is Poisson and has different graphic than regular fishies
+
+            
+
+            ships.Add(new Ship(new Vector2(100f, 100f), 0.0f));
+
+            foreach (Fish fish in fishes) {
+                fish.Initialise(this);
+            }
+
+            foreach (Ship ship in ships) {
+                ship.Initialise(this);
+            }
+
+            player.Initialise(this);
 
             base.Initialize();
         }
@@ -52,8 +69,6 @@ namespace Poisson
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            SpriteTexture = Content.Load<Texture2D>("Textures/Ammo/rock_ammo");
 
             // TODO: use this.Content to load your game content here
         }
@@ -65,16 +80,15 @@ namespace Poisson
 
         protected override void Update(GameTime gameTime)
         {
-            // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
             foreach (Fish fish in fishes) {
-
+                fish.Update(gameTime, ships, player);
             }
 
             foreach (Ship ship in ships) {
-
+                ship.Update(gameTime, fishes, player);
             }
 
             player.Update(gameTime, ships, player);
@@ -84,13 +98,19 @@ namespace Poisson
 
         protected override void Draw(GameTime gameTime)
         {
-           {
-                graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
-                spriteBatch.Begin();
-                    Vector2 pos = new Vector2(0.0f, 10.0f);
-                    spriteBatch.Draw(SpriteTexture, pos, Color.White);
-                spriteBatch.End();
-            }
+            spriteBatch.Begin();
+
+                foreach (Fish fish in fishes) {
+                    fish.Render(gameTime, this.spriteBatch);
+                }
+
+                foreach (Ship ship in ships) {
+                    ship.Render(gameTime, this.spriteBatch);
+                }
+
+                player.Render(gameTime, this.spriteBatch);
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
