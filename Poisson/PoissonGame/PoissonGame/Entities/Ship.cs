@@ -70,7 +70,6 @@ namespace Poisson.Entities
                     break;
             }
 
-            Debug.WriteLine(this.hookState);
         }
 
         public override void Render(GameTime gameTime, SpriteBatch batch)
