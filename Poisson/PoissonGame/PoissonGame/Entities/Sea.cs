@@ -31,6 +31,9 @@ namespace Poisson.Entities
             if (this.Pos.X > this.SpriteRect.Width) {
                 tempPos.X -= this.SpriteRect.Width;
                 this.Pos = tempPos;
+            } else if (this.Pos.X < 0) {
+                tempPos.X += this.SpriteRect.Width;
+                this.Pos = tempPos;
             }
         }
 

@@ -20,8 +20,12 @@ namespace Poisson
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Dictionary<string, Animation> animations = new Dictionary<string, Animation>();
+        
 
         // Game Properties
+        int score = 0;
+        SpriteFont hudFont;
+
         List<Entity> fishes;
         List<Entity> ships;
         List<Entity> seas;
@@ -42,7 +46,7 @@ namespace Poisson
         protected override void Initialize()
         {
             fishes = new List<Entity>();
-            //fishes.Add(new Fish(new Vector2(400f, 0f), 0.0f));
+            hudFont = Content.Load<SpriteFont>("HUDFont");
 
             ships = new List<Entity>();
 
@@ -51,9 +55,9 @@ namespace Poisson
             player = new Fish(new Vector2(400f, 200f), 1.72f); //player is Poisson and has different graphic than regular fishies
             fishes.Add(player);
 
-            ships.Add(new Ship(new Vector2(100f, 100f), 0.0f));
-            seas.Add(new Sea(new Vector2(0.0f, 0.0f), new Vector2(10.0f, 0.0f), 0.5f));
-            seas.Add(new Sea(new Vector2(0.0f, 0.0f), new Vector2(10.0f, 0.0f), 1.5f));
+            ships.Add(new Ship(new Vector2(100f, 50f), 0.0f));
+            seas.Add(new Sea(new Vector2(0.0f, 50.0f), new Vector2(10.0f, 0.0f), 0.5f));
+            seas.Add(new Sea(new Vector2(0.0f, 150.0f), new Vector2(-10.0f, 0.0f), 0.39f));
 
             foreach (Fish fish in fishes)
             {
@@ -94,6 +98,10 @@ namespace Poisson
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
+            score = (int)gameTime.TotalGameTime.TotalMilliseconds * 7;
+            
+
+
             foreach (Fish fish in fishes) {
                 fish.Update(gameTime, ships, player);
                 
@@ -127,6 +135,8 @@ namespace Poisson
         protected override void Draw(GameTime gameTime)
         {
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+
+            this.spriteBatch.DrawString(hudFont, score.ToString(), new Vector2(0f, 0f), Color.Black);
 
             foreach (Fish fish in fishes)
             {
