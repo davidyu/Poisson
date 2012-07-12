@@ -5,7 +5,4 @@ using System.Text;
 
 namespace Poisson.Entities
 {
-    class Hook : Entity
-    {
-    }
 }
