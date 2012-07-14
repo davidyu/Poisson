@@ -50,15 +50,11 @@ namespace Poisson
             hudFont = Content.Load<SpriteFont>("HUDFont");
 
             ships = new List<Entity>();
-<<<<<<< HEAD
-            player = new Fish(new Vector2(400f, 0f), 0.0f, true); //player is Poisson and has different graphic than regular fishies
-=======
 
-            player = new Fish(new Vector2(400f, 0f), 1.72f); //player is Poisson and has different graphic than regular fishies
+            player = new Fish(new Vector2(400f, 0f), 0.0f, true); //player is Poisson and has different graphic than regular fishies
+
             seas = new List<Entity>();
-            player = new Fish(new Vector2(400f, 200f), 1.72f); //player is Poisson and has different graphic than regular fishies
             fishes.Add(player);
->>>>>>> e75e7f41e8e0577c01d7a0a228d21bd94a7dc4fd
 
             ships.Add(new Ship(new Vector2(100f, 50f), 0.0f));
             //seas.Add(new Sea(new Vector2(0.0f, 50.0f), new Vector2(10.0f, 0.0f), 0.5f));
