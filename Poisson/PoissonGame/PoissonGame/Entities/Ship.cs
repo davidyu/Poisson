@@ -11,16 +11,27 @@ namespace Poisson.Entities
 
     class Ship : Entity
     {
-        enum EHookState { UP = 0, DOWN = 1, RETRACTED = 2 } //maybe different hook types later
-        enum EShipState { SEEKING, HOOKING}
+        enum EHookState {
+            UP,
+            DOWN,
+            RETRACTED
+        } //maybe different hook types later
+
+        enum EShipState {
+            SEEKING, //movin' around
+            HOOKING  //throw dat bait Jimmy!
+        }
+
+        EHookState hookState;
+        EShipState shipState;
 
         int timeToNextHook;
 
         const float FRICTION = 0.99f;
         const float BORING_HOOK_VEL = 5f;
-        const int BOTTOM_OF_SCREEN = 400;
+        const int BOTTOM_OF_SCREEN = 400; //worst constant ever.
 
-        const int TOP_OF_ROD = 20;
+        const int TOP_OF_ROD = 20;        //ugly constants to keep the hook in the right place. Kill me now.
         const int ROD_OFFSET = 227;
         const int ROD_OFFSET_FLIP = 10;
 
@@ -29,15 +40,17 @@ namespace Poisson.Entities
 
         public Rectangle hookRect
         {
-            get { return new Rectangle((int) hookPos.X + (int) Pos.X, (int) Pos.Y + (int) hookPos.Y, this._hookRect.Width, this._hookRect.Width); }
+            get {
+                return new Rectangle((int) hookPos.X + (int) Pos.X,
+                                     (int) Pos.Y + (int) hookPos.Y,
+                                      this._hookRect.Width,
+                                      this._hookRect.Width); //gross
+            }
         }
 
         Vector2 hookPos;
-        EHookState hookState;
-        EShipState shipState;
         Texture2D hookSprite;
-
-        Random rseed;
+        Random rseed; //used for random interval hooking
 
         public Ship() : base()
         {
@@ -56,7 +69,7 @@ namespace Poisson.Entities
             this.SpriteRect = new Rectangle(0, 0, 256, 164);
             this._hookRect = new Rectangle(0, 0, 40, 40);
             this.hookPos = new Vector2(ROD_OFFSET, 0);
-            this.hookState = EHookState.DOWN;
+            this.hookState = EHookState.RETRACTED;
             this.Vel = new Vector2(3.0f, 0.0f);
             this.Facing = true;
             this.timeToNextHook = 4000;

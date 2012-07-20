@@ -12,6 +12,13 @@ namespace Poisson.Entities
 
     class Fish : Entity
     {
+        enum EFishState {
+            STEERING,     //follow Poisson! Poisson is perpetually in this mode
+            SPONTANEOUS,  //random movement
+            HOOKED,       //Jimmy John got you, you poor thing
+            DEAD          //just before being removed from screen
+        }
+
         const float FRICTION = 0.99f;
         public bool isTouching { get; set; }
         Vector2 userTouch { get; set; }
@@ -25,11 +32,6 @@ namespace Poisson.Entities
             : base()
         {
         }
-
-        //public Fish(Vector2 pos, float orient)
-        //    : base(pos, orient)
-        //{
-        //}
 
         public Fish(Vector2 pos, float orient, bool isHuman)
             : base(pos, orient)
@@ -155,6 +157,11 @@ namespace Poisson.Entities
                 Random random = new Random();
             }
 
+        }
+
+        public void Hooked()
+        {
+            
         }
 
         public override void Render(GameTime gameTime, SpriteBatch batch)
