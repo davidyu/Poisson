@@ -17,16 +17,17 @@ namespace Poisson.Entities
             STEERING,     //follow Poisson! Poisson is perpetually in this mode
             SPONTANEOUS,  //random movement
             HOOKED,       //Jimmy John got you, you poor thing
-            DEAD          //just before being removed from screen
+            DEAD,          //just before being removed from screen
+            WAIT
         }
 
         private bool          flipX   = false;
         private SpriteEffects effects = SpriteEffects.None;
+        private float         rotation = 0.0f;
+        private EFishState    state = EFishState.STEERING;
+        private Vector2       target = new Vector2(0, 0);
 
-
-        const float FRICTION = 0.99f;
-        public bool isTouching { get; set; }
-        Vector2 userTouch { get; set; }
+        const float FRICTION = 0.90f;
         public bool inRoutine { get; set;}
         GameTime routineStartTime {get; set;}
         Vector2 targetPoint {get; set; }
@@ -52,8 +53,10 @@ namespace Poisson.Entities
 
             if (this.isHuman) {
                 this.SpriteRect = new Rectangle(0, 164, 111, 64);
+                this.state = EFishState.STEERING;
             } else {
                 this.SpriteRect = new Rectangle(0, 228, 45, 28);
+                this.state = EFishState.SPONTANEOUS;
             }
 
             this.BoundingRect = new Rectangle(0, 0, 164, 64);
@@ -64,14 +67,12 @@ namespace Poisson.Entities
             TouchCollection tc = TouchPanel.GetState();
             foreach (TouchLocation tl in tc) {
                 if (tl.State == TouchLocationState.Pressed || tl.State == TouchLocationState.Moved) {
+                    this.rotation = (float)Math.Atan2(Pos.Y - tl.Position.Y, Pos.X - tl.Position.X) % MathUtils.circle;
+                    //refactor later for angular velocity
                     this.flipX = (Pos.X < tl.Position.X);
                     Vector2 delta = tl.Position - Pos;
                     delta.Normalize();
-                    this.Orient = (float) Math.Atan2(Pos.Y - tl.Position.Y, Pos.X - tl.Position.X) % MathUtils.circle;
                     this.Vel = delta * 10;
-                    this.Orient += 0.1f;
-                } else {
-                    this.Vel *= 0.1f; //dampen vel
                 }
             }
         }
@@ -81,54 +82,7 @@ namespace Poisson.Entities
             if (isHuman) {
                 PollInput();
             } else {
-                //if they're within the radius of the human fishy, change attributes accordingly
-                if (Math.Abs(this.Pos.X - player.Pos.X) < 50 && Math.Abs(this.Pos.Y - player.Pos.Y) < 50)
-                {
-                    inRoutine = false;
-                    Vector2 Vdif = new Vector2(player.Pos.X - this.Pos.X, player.Pos.Y - this.Pos.Y);
-                    Vdif.Normalize();
-                    Vdif = new Vector2(Vdif.X * 3, Vdif.Y * 3);
-                    this.Vel = Vdif;
-                }
-                else
-                {
-                    if (inRoutine)
-                    {
-                        if (routineStartTime != null)
-                        {
-                            if (gameTime.TotalGameTime.TotalSeconds - routineStartTime.TotalGameTime.TotalSeconds < 10) //DON'T MOVE FISHY
-                            {
-                                this.Vel = new Vector2(0, 0);
-                            }
-                            else //time to move!
-                            {
-                                Random random = new Random();
-                                if ((gameTime.TotalGameTime.TotalSeconds - routineStartTime.TotalGameTime.TotalSeconds < 30) || this.Pos == targetPoint)
-                                {
-                                    this.Vel = new Vector2(0, 0);
-                                    inRoutine = false;
-                                }
-                                else if (this.Vel.X.Equals(0) || this.Vel.Y.Equals(0)) //freshly moving, set the target move point
-                                {
-                                    targetPoint = new Vector2(random.Next(800), random.Next(480));
-                                    Vector2 newVel = targetPoint;
-                                    newVel.Normalize();
-                                    this.Vel = new Vector2(newVel.X, newVel.Y);
-                                }
-                                else //move to target location
-                                {
-                                }
-                            }
-                        }
-
-                    }
-                    else //start the AI routine
-                    {
-                        inRoutine = true;
-                        routineStartTime = gameTime;
-                        this.Vel = new Vector2(0, 0);
-                    }
-                }
+                Autonomous(player);
             }
             
             //common update code at the end
@@ -136,7 +90,6 @@ namespace Poisson.Entities
             this.Orient += this.AngVel;
             this.Vel *= FRICTION;
         }
-
 
         public void Routine(GameTime gameTime)
         {
@@ -159,12 +112,54 @@ namespace Poisson.Entities
         public override void Render(GameTime gameTime, SpriteBatch batch)
         {
             this.effects = this.flipX ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            this.Orient  = this.flipX ? this.Orient - MathUtils.circle/2 : this.Orient;
+            this.Orient  = this.flipX ? this.rotation - MathUtils.circle/2 : this.rotation;
             
             Rectangle destRect = new Rectangle((int)this.Pos.X, (int)this.Pos.Y, (int)SpriteRect.Width, (int)SpriteRect.Height);
             batch.Draw(this.SpriteTexture, this.Pos,
                 this.SpriteRect, Color.White,
                 this.Orient, new Vector2(SpriteRect.Width/2, SpriteRect.Height/2), 1.0f, this.effects, 0.0f);
+        }
+
+        private void Autonomous(Entity player)
+        {
+            Vector2 delta  = player.Pos - Pos;
+            if (this.state == EFishState.STEERING)
+            {
+                if (delta.Length() >= 200.0)
+                {
+                    this.state = EFishState.SPONTANEOUS;
+                    Random random = new Random();
+                    this.target = new Vector2((float)random.NextDouble() * 800.0f, (float)random.NextDouble() * 480.0f);
+                }
+                else
+                {
+                    this.rotation = (float)Math.Atan2(player.Pos.Y - Pos.Y, player.Pos.X - Pos.X) % MathUtils.circle;
+                    this.flipX = (Pos.X < player.Pos.X);
+                    delta = -delta;
+                    delta.Normalize();
+                    this.Vel = delta * 10;
+                }
+            }
+            else if (this.state == EFishState.SPONTANEOUS)
+            {
+                Vector2 dprime = target - Pos;
+                if (delta.Length() <= 50.0)
+                {
+                    this.state = EFishState.STEERING;
+                }
+                else if (dprime.Length() <= 20.0)
+                {
+                    Random random = new Random();
+                    this.target = new Vector2((float)random.NextDouble() * 800.0f, (float)random.NextDouble() * 480.0f);
+                }
+                else
+                {
+                    this.rotation = (float)Math.Atan2(Pos.Y - target.Y, Pos.X - target.X) % MathUtils.circle;
+                    this.flipX = (Pos.X < target.X);
+                    dprime.Normalize();
+                    this.Vel = dprime * 3;
+                }
+            }
         }
     }
 }
