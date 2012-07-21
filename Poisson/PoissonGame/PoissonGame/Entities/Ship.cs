@@ -10,15 +10,18 @@ namespace Poisson
 
     class Ship : Entity
     {
-        enum EHookState {
+        enum EHookState
+        {
             UP,
             DOWN,
             RETRACTED
         } //maybe different hook types later
 
-        enum EShipState {
+        enum EShipState
+        {
             SEEKING, //movin' around
-            HOOKING  //throw dat bait Jimmy!
+            WAITING, //moving before hooking
+            HOOKING,  //throw dat bait Jimmy!
         }
 
         EHookState hookState;
@@ -26,9 +29,11 @@ namespace Poisson
 
         int timeToNextHook;
 
+        const float movingVel = 5f;
+
         const float FRICTION = 0.99f;
         const float BORING_HOOK_VEL = 5f;
-        const int   BOTTOM_OF_SCREEN = 400; //worst constant ever.
+        const int BOTTOM_OF_SCREEN = 400; //worst constant ever.
 
         const int TOP_OF_ROD = 20;        //ugly constants to keep the hook in the right place.
         const int ROD_OFFSET = 227;
@@ -39,9 +44,10 @@ namespace Poisson
 
         public Rectangle hookRect
         {
-            get {
-                return new Rectangle((int) hookPos.X + (int) Pos.X,
-                                     (int) Pos.Y + (int) hookPos.Y,
+            get
+            {
+                return new Rectangle((int)hookPos.X + (int)Pos.X,
+                                     (int)Pos.Y + (int)hookPos.Y,
                                       this._hookRect.Width,
                                       this._hookRect.Width); //gross
             }
@@ -51,12 +57,15 @@ namespace Poisson
         Texture2D hookSprite;
         Random rseed; //used for random interval hooking
 
-        public Ship() : base()
+        Vector2 shipDestination;
+
+        public Ship()
+            : base()
         {
         }
 
         public Ship(Vector2 pos, float orient)
-            : base(pos, orient) 
+            : base(pos, orient)
         {
         }
 
@@ -78,30 +87,64 @@ namespace Poisson
         //need gameTime to reset timeToNextHook
         private void setShipToSeek(GameTime gameTime)
         {
+            //while newDestination is not too close to this.Pos.X, generate newDest value
+            float newDestination = rseed.Next(1, 4) * 200 - 100;
+            //determine ships destination
+            //if (newDestination < this.Pos.X) //FLIP THE SHIP TO FACE LEFT
+            //{
+            //    spriteEffects = SpriteEffects.FlipHorizontally;
+            //    hookPos = new Vector2(ROD_OFFSET_FLIP, hookPos.Y);
+            //}
+            if (newDestination < this.Pos.X) //SET VELOCITY
+            {
+                this.Vel = new Vector2(-3.0f, 0.0f);
+            }
+            else
+            {
+                this.Vel = new Vector2(3.0f, 0.0f);
+            }
+            this.shipDestination = new Vector2((float)(newDestination), this.Pos.Y); //SET DESTINATION
+
             this.shipState = EShipState.SEEKING;
-            this.timeToNextHook = (int) gameTime.TotalGameTime.TotalMilliseconds + rseed.Next(0, 4000);
+            //this.timeToNextHook = (int)gameTime.TotalGameTime.TotalMilliseconds + rseed.Next(0, 4000);
+        }
+
+        private void setShipToWait(GameTime gameTime)
+        {
+            this.Vel = new Vector2(0.0f, 0.0f);
+            this.shipState = EShipState.WAITING;
+            this.timeToNextHook = (int)gameTime.TotalGameTime.TotalMilliseconds + 100; //set the time to send the hook down!
         }
 
         private void setShipToHook()
         {
+            float newHookDestination = (float)(200/3*(rseed.Next(0,3)+200));
+            this.hookDestination = new Vector2((float)(newHookDestination), this.Pos.Y);
             this.shipState = EShipState.HOOKING;
             this.hookState = EHookState.DOWN;
         }
+
+
 
         public override void Update(GameTime gameTime, List<Entity> entities, Entity player, Camera cam)
         {
             switch (this.shipState) {
                 case EShipState.SEEKING:
                     break;
-                case EShipState.HOOKING;
+                case EShipState.WAITING:
+                    break;
+                case EShipState.HOOKING:
                     break;
             }
 
             if (shipState == EShipState.SEEKING) {
-                
+                if (Math.Abs(this.Pos.X - this.shipDestination.X) < 10.0)
+                {
+                    setShipToWait(gameTime);
+                }
             }
 
-            if ((shipState == EShipState.SEEKING) && (gameTime.TotalGameTime.TotalMilliseconds >= this.timeToNextHook)) {
+            if ((shipState == EShipState.WAITING) && (gameTime.TotalGameTime.TotalMilliseconds >= this.timeToNextHook)) {
                 setShipToHook();
             }
 
@@ -135,10 +178,13 @@ namespace Poisson
         {
             SpriteEffects spriteEffects = new SpriteEffects();
 
-            if (!Facing) {
+            if (!Facing)
+            {
                 spriteEffects = SpriteEffects.FlipHorizontally;
                 hookPos = new Vector2(ROD_OFFSET_FLIP, hookPos.Y);
-            } else {
+            }
+            else
+            {
                 hookPos = new Vector2(ROD_OFFSET, hookPos.Y);
             }
 
@@ -150,7 +196,7 @@ namespace Poisson
 
             batch.Draw(this.hookSprite, this.Pos + this.hookPos,
                 _hookSpriteRect, Color.White,
-                this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.3f);    
+                this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.3f);
         }
     }
 }
