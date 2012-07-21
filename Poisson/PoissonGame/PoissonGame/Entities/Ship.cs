@@ -88,7 +88,7 @@ namespace Poisson
             this.hookState = EHookState.DOWN;
         }
 
-        public override void Update(GameTime gameTime, List<Entity> entities, Entity player)
+        public override void Update(GameTime gameTime, List<Entity> entities, Entity player, Camera cam)
         {
             if (shipState == EShipState.SEEKING) {
                 this.Pos += this.Vel;
@@ -122,7 +122,7 @@ namespace Poisson
             }
         }
 
-        public override void Render(GameTime gameTime, SpriteBatch batch)
+        public override void Render(GameTime gameTime, SpriteBatch batch, Camera cam)
         {
             SpriteEffects spriteEffects = new SpriteEffects();
 

@@ -23,7 +23,7 @@ namespace Poisson
             this.SpriteRect = new Rectangle(0, 0, 799, 360);
         }
 
-        public override void Update(GameTime gameTime, List<Entity> entities, Entity player)
+        public override void Update(GameTime gameTime, List<Entity> entities, Entity player, Camera cam)
         {
             Vector2 tempPos = this.Pos;
 
@@ -37,14 +37,14 @@ namespace Poisson
             }
         }
 
-        public override void Render(GameTime gameTime, SpriteBatch batch)
+        public override void Render(GameTime gameTime, SpriteBatch batch, Camera cam)
         {
             batch.Draw(this.SpriteTexture, this.Pos,
                 this.SpriteRect, Color.White,
-                this.Orient, new Vector2(0f, 0f), 1.0f, SpriteEffects.None, this.depth);
+                this.Orient, new Vector2(0f, 0f), 2.0f, SpriteEffects.None, this.depth);
             batch.Draw(this.SpriteTexture, this.Pos- new Vector2(this.SpriteRect.Width, 0.0f),
                this.SpriteRect, Color.White,
-               this.Orient, new Vector2(0f, 0f), 1.0f, SpriteEffects.None, this.depth);
+               this.Orient, new Vector2(0f, 0f), 2.0f, SpriteEffects.None, this.depth);
         }
 
     }
