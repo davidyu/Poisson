@@ -62,25 +62,26 @@ namespace Poisson.Entities
             this.BoundingRect = new Rectangle(0, 0, 164, 64);
         }
 
-        private void PollInput()
+        private void PollInput(Camera cam)
         {
             TouchCollection tc = TouchPanel.GetState();
             foreach (TouchLocation tl in tc) {
                 if (tl.State == TouchLocationState.Pressed || tl.State == TouchLocationState.Moved) {
-                    this.rotation = (float)Math.Atan2(Pos.Y - tl.Position.Y, Pos.X - tl.Position.X) % MathUtils.circle;
+                    Vector2 touchPos = cam.ScreenToWorld(tl.Position); //converted to camera pos
+                    this.rotation = (float)Math.Atan2(Pos.Y - touchPos.Y, Pos.X - touchPos.X) % MathUtils.circle;
                     //refactor later for angular velocity
-                    this.flipX = (Pos.X < tl.Position.X);
-                    Vector2 delta = tl.Position - Pos;
+                    this.flipX = (Pos.X < touchPos.X);
+                    Vector2 delta = touchPos - Pos;
                     delta.Normalize();
                     this.Vel = delta * 10;
                 }
             }
         }
 
-        public override void Update(GameTime gameTime, List<Entity> entities, Entity player)
+        public override void Update(GameTime gameTime, List<Entity> entities, Entity player, Camera cam)
         {
             if (isHuman) {
-                PollInput();
+                PollInput(cam);
             } else {
                 Autonomous(player);
             }
@@ -109,7 +110,7 @@ namespace Poisson.Entities
             
         }
 
-        public override void Render(GameTime gameTime, SpriteBatch batch)
+        public override void Render(GameTime gameTime, SpriteBatch batch, Camera cam)
         {
             this.effects = this.flipX ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             this.Orient  = this.flipX ? this.rotation - MathUtils.circle/2 : this.rotation;

@@ -89,11 +89,17 @@ namespace Poisson.Entities
             this.hookState = EHookState.DOWN;
         }
 
-        public override void Update(GameTime gameTime, List<Entity> entities, Entity player)
+        public override void Update(GameTime gameTime, List<Entity> entities, Entity player, Camera cam)
         {
+            switch (this.shipState) {
+                case EShipState.SEEKING:
+                    break;
+                case EShipState.HOOKING:
+                    break;
+            }
+
             if (shipState == EShipState.SEEKING) {
-                this.Pos += this.Vel;
-                this.Orient += this.AngVel;
+                
             }
 
             if ((shipState == EShipState.SEEKING) && (gameTime.TotalGameTime.TotalMilliseconds >= this.timeToNextHook)) {
@@ -121,9 +127,12 @@ namespace Poisson.Entities
                 case EHookState.RETRACTED:
                     break;
             }
+
+            this.Pos += this.Vel;
+            this.Vel *= FRICTION;
         }
 
-        public override void Render(GameTime gameTime, SpriteBatch batch)
+        public override void Render(GameTime gameTime, SpriteBatch batch, Camera cam)
         {
             SpriteEffects spriteEffects = new SpriteEffects();
 

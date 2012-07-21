@@ -19,6 +19,7 @@ namespace Poisson
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Camera camera;
 
         int score = 0;
         SpriteFont hudFont;
@@ -28,6 +29,7 @@ namespace Poisson
         List<Entity> seas;
 
         Dictionary<string, Animation> animations = new Dictionary<string, Animation>();
+
 
         Fish player; //player will also be fishes[0] upon init
 
@@ -45,6 +47,15 @@ namespace Poisson
 
         protected override void Initialize()
         {
+            // Init GFX
+            float SCREEN_WIDTH = (float)graphics.GraphicsDevice.Viewport.Width;
+            float SCREEN_HEIGHT = (float)graphics.GraphicsDevice.Viewport.Height;
+
+            Matrix projection;
+
+            camera = new Camera(0.5f);
+
+            //this.projection = Matrix.CreateScale(SCREEN_WIDTH / 2560f, SCREEN_HEIGHT / 2400f, 1f);
             Random random = new Random();
             fishes = new List<Entity>();
             hudFont = Content.Load<SpriteFont>("HUDFont");
@@ -63,8 +74,7 @@ namespace Poisson
             for (int i = 0; i < 3; i++) {
                 fishes.Add(new Fish(new Vector2(random.Next(800), random.Next(480)), 0.0f, false)); //NEED TO INCLUDE MIniMUMS FOR THE SEA LATER
             }
-
-
+                
             foreach (Fish fish in fishes) {
                 fish.Initialise(this);
             }
@@ -106,15 +116,15 @@ namespace Poisson
             CheckCollisions();
 
             foreach (Fish fish in fishes) {
-                fish.Update(gameTime, ships, player);
+                fish.Update(gameTime, ships, player, this.camera);
             }
 
             foreach (Ship ship in ships) {
-                ship.Update(gameTime, fishes, player);
+                ship.Update(gameTime, fishes, player, this.camera);
             }
 
             foreach (Sea sea in this.seas) {
-                sea.Update(gameTime, fishes, player);
+                sea.Update(gameTime, fishes, player, this.camera);
             }
 
             base.Update(gameTime);
@@ -133,20 +143,21 @@ namespace Poisson
         protected override void Draw(GameTime gameTime)
         {
             graphics.GraphicsDevice.Clear(new Color(219, 237, 212));
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend,
+                SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, null, this.camera.Projection);
 
             this.spriteBatch.DrawString(hudFont, score.ToString(), new Vector2(0f, 0f), Color.Black);
 
             foreach (Fish fish in fishes) {
-                fish.Render(gameTime, this.spriteBatch);
+                fish.Render(gameTime, this.spriteBatch, this.camera);
             }
 
             foreach (Ship ship in ships) {
-                ship.Render(gameTime, this.spriteBatch);
+                ship.Render(gameTime, this.spriteBatch, this.camera);
             }
 
             foreach (Sea sea in this.seas) {
-                sea.Render(gameTime, this.spriteBatch);
+                sea.Render(gameTime, this.spriteBatch, this.camera);
             }
 
             spriteBatch.End();
