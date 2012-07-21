@@ -68,12 +68,40 @@ namespace Poisson.Entities
             foreach (TouchLocation tl in tc) {
                 if (tl.State == TouchLocationState.Pressed || tl.State == TouchLocationState.Moved) {
                     Vector2 touchPos = cam.ScreenToWorld(tl.Position); //converted to camera pos
-                    this.rotation = (float)Math.Atan2(Pos.Y - touchPos.Y, Pos.X - touchPos.X) % MathUtils.circle;
-                    //refactor later for angular velocity
-                    this.flipX = (Pos.X < touchPos.X);
-                    Vector2 delta = touchPos - Pos;
-                    delta.Normalize();
-                    this.Vel = delta * 10;
+                    MoveTowards(touchPos, 10);
+                }
+            }
+        }
+
+        private void Autonomous(Entity player)
+        {
+            Vector2 delta = player.Pos - Pos;
+            if (this.state == EFishState.STEERING)
+            {
+                if (delta.Length() >= 200.0)
+                {
+                    this.state = EFishState.SPONTANEOUS;
+                    FindNewTarget();
+                }
+                else
+                {
+                    MoveAwayFrom(player.Pos, 10);
+                }
+            }
+            else if (this.state == EFishState.SPONTANEOUS)
+            {
+                Vector2 dprime = target - Pos;
+                if (delta.Length() <= 50.0)
+                {
+                    this.state = EFishState.STEERING;
+                }
+                else if (dprime.Length() <= 20.0)
+                {
+                    FindNewTarget();
+                }
+                else
+                {
+                    MoveTowards(target, 3);
                 }
             }
         }
@@ -92,17 +120,28 @@ namespace Poisson.Entities
             this.Vel *= FRICTION;
         }
 
-        public void Routine(GameTime gameTime)
+        private void FindNewTarget()
         {
-            if (gameTime.TotalGameTime.TotalSeconds - routineStartTime.TotalGameTime.TotalSeconds < 10) //DON'T MOVE FISHY
-            {
-                this.Vel = new Vector2(0,0);
-            }
-            else
-            {
-                Random random = new Random();
-            }
+            Random random = new Random();
+            this.target = new Vector2((float)random.NextDouble() * 800.0f, (float)random.NextDouble() * 480.0f);
+        }
 
+        private void MoveTowards(Vector2 loc, float intensity)
+        {
+            Vector2 delta = loc - Pos;
+            this.rotation = (float)Math.Atan2(Pos.Y - loc.Y, Pos.X - loc.X) % MathUtils.circle;
+            this.flipX = (Pos.X < loc.X);
+            delta.Normalize();
+            this.Vel = delta * intensity;
+        }
+
+        private void MoveAwayFrom(Vector2 loc, float intensity)
+        {
+            Vector2 delta = Pos - loc;
+            this.rotation = (float)Math.Atan2(loc.Y - Pos.Y, loc.X - Pos.X) % MathUtils.circle;
+            this.flipX = (Pos.X < loc.X);
+            delta.Normalize();
+            this.Vel = delta * intensity;
         }
 
         public void Hooked() //do-me: implement actions when hooked
@@ -119,48 +158,6 @@ namespace Poisson.Entities
             batch.Draw(this.SpriteTexture, this.Pos,
                 this.SpriteRect, Color.White,
                 this.Orient, new Vector2(SpriteRect.Width/2, SpriteRect.Height/2), 1.0f, this.effects, 0.0f);
-        }
-
-        private void Autonomous(Entity player)
-        {
-            Vector2 delta  = player.Pos - Pos;
-            if (this.state == EFishState.STEERING)
-            {
-                if (delta.Length() >= 200.0)
-                {
-                    this.state = EFishState.SPONTANEOUS;
-                    Random random = new Random();
-                    this.target = new Vector2((float)random.NextDouble() * 800.0f, (float)random.NextDouble() * 480.0f);
-                }
-                else
-                {
-                    this.rotation = (float)Math.Atan2(player.Pos.Y - Pos.Y, player.Pos.X - Pos.X) % MathUtils.circle;
-                    this.flipX = (Pos.X < player.Pos.X);
-                    delta = -delta;
-                    delta.Normalize();
-                    this.Vel = delta * 10;
-                }
-            }
-            else if (this.state == EFishState.SPONTANEOUS)
-            {
-                Vector2 dprime = target - Pos;
-                if (delta.Length() <= 50.0)
-                {
-                    this.state = EFishState.STEERING;
-                }
-                else if (dprime.Length() <= 20.0)
-                {
-                    Random random = new Random();
-                    this.target = new Vector2((float)random.NextDouble() * 800.0f, (float)random.NextDouble() * 480.0f);
-                }
-                else
-                {
-                    this.rotation = (float)Math.Atan2(Pos.Y - target.Y, Pos.X - target.X) % MathUtils.circle;
-                    this.flipX = (Pos.X < target.X);
-                    dprime.Normalize();
-                    this.Vel = dprime * 3;
-                }
-            }
         }
     }
 }
