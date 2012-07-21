@@ -20,8 +20,9 @@ namespace Poisson.Entities
             DEAD          //just before being removed from screen
         }
 
-        private bool          _flipX   = false;
-        private SpriteEffects _effects = SpriteEffects.None;
+        private bool          flipX   = false;
+        private SpriteEffects effects = SpriteEffects.None;
+
 
         const float FRICTION = 0.99f;
         public bool isTouching { get; set; }
@@ -63,10 +64,12 @@ namespace Poisson.Entities
             TouchCollection tc = TouchPanel.GetState();
             foreach (TouchLocation tl in tc) {
                 if (tl.State == TouchLocationState.Pressed || tl.State == TouchLocationState.Moved) {
-                    _flipX = (Pos.X < tl.Position.X);
+                    this.flipX = (Pos.X < tl.Position.X);
                     Vector2 delta = tl.Position - Pos;
                     delta.Normalize();
+                    this.Orient = (float) Math.Atan2(Pos.Y - tl.Position.Y, Pos.X - tl.Position.X) % MathUtils.circle;
                     this.Vel = delta * 10;
+                    this.Orient += 0.1f;
                 } else {
                     this.Vel *= 0.1f; //dampen vel
                 }
@@ -155,13 +158,13 @@ namespace Poisson.Entities
 
         public override void Render(GameTime gameTime, SpriteBatch batch)
         {
-            _effects = _flipX ? SpriteEffects.FlipHorizontally : SpriteEffects.None;  
+            this.effects = this.flipX ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            this.Orient  = this.flipX ? this.Orient - MathUtils.circle/2 : this.Orient;
             
             Rectangle destRect = new Rectangle((int)this.Pos.X, (int)this.Pos.Y, (int)SpriteRect.Width, (int)SpriteRect.Height);
-            //batch.Draw(this.SpriteTexture, this.Pos, Color.White);
             batch.Draw(this.SpriteTexture, this.Pos,
                 this.SpriteRect, Color.White,
-                this.Orient, new Vector2(0f, 0f), 1.0f, _effects, 0.0f);
+                this.Orient, new Vector2(SpriteRect.Width/2, SpriteRect.Height/2), 1.0f, this.effects, 0.0f);
         }
     }
 }

@@ -117,8 +117,6 @@ namespace Poisson
                 sea.Update(gameTime, fishes, player);
             }
 
-            player.Update(gameTime, ships, player);
-
             base.Update(gameTime);
         }
 
@@ -150,8 +148,6 @@ namespace Poisson
             foreach (Sea sea in this.seas) {
                 sea.Render(gameTime, this.spriteBatch);
             }
-
-            player.Render(gameTime, this.spriteBatch);
 
             spriteBatch.End();
 
