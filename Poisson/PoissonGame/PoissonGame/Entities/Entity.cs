@@ -19,11 +19,11 @@ namespace Poisson.Entities
         public Texture2D SpriteTexture { get; set; }
         public Rectangle SpriteRect { get; set; }
 
-        private Rectangle _bRect;
+        private Rectangle bRect;
 
         public Rectangle BoundingRect { 
-            get { return (new Rectangle((int)Pos.X, (int)Pos.Y, _bRect.Width, _bRect.Height)); }
-            set { _bRect = value; }
+            get { return (new Rectangle((int)Pos.X, (int)Pos.Y, bRect.Width, bRect.Height)); }
+            set { bRect = value; }
         }
 
         public Entity() { }

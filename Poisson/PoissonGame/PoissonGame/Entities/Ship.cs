@@ -139,7 +139,6 @@ namespace Poisson.Entities
             }
 
             Rectangle destRect = new Rectangle((int)this.Pos.X, (int)this.Pos.Y, (int)SpriteRect.Width, (int)SpriteRect.Height);
-            //batch.Draw(this.SpriteTexture, this.Pos, Color.White);
             batch.Draw(this.SpriteTexture, this.Pos,
                 this.SpriteRect, Color.White,
                 this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.4f);
