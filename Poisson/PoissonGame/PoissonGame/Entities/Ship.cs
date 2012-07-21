@@ -57,7 +57,7 @@ namespace Poisson.Entities
         }
 
         public Ship(Vector2 pos, float orient)
-            : base(pos, orient)
+            : base(pos, orient) 
         {
         }
 
