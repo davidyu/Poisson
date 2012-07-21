@@ -9,10 +9,12 @@ namespace Poisson.Entities
 
     class Sea : Entity
     {
+        float depth;
 
-        public Sea(Vector2 pos, Vector2 vel) : base(pos, 0.0f)
+        public Sea(Vector2 pos, Vector2 vel, float depth) : base(pos, 0.0f)
         {
             this.Vel = vel;
+            this.depth = depth;
         }
 
         public override void Initialise(Game game)
@@ -23,14 +25,26 @@ namespace Poisson.Entities
 
         public override void Update(GameTime gameTime, List<Entity> entities, Entity player)
         {
+            Vector2 tempPos = this.Pos;
+
             this.Pos += this.Vel;
+            if (this.Pos.X > this.SpriteRect.Width) {
+                tempPos.X -= this.SpriteRect.Width;
+                this.Pos = tempPos;
+            } else if (this.Pos.X < 0) {
+                tempPos.X += this.SpriteRect.Width;
+                this.Pos = tempPos;
+            }
         }
 
         public override void Render(GameTime gameTime, SpriteBatch batch)
         {
             batch.Draw(this.SpriteTexture, this.Pos,
                 this.SpriteRect, Color.White,
-                this.Orient, new Vector2(0f, 0f), 1.0f, SpriteEffects.None, 0.0f);
+                this.Orient, new Vector2(0f, 0f), 1.0f, SpriteEffects.None, this.depth);
+            batch.Draw(this.SpriteTexture, this.Pos- new Vector2(this.SpriteRect.Width, 0.0f),
+               this.SpriteRect, Color.White,
+               this.Orient, new Vector2(0f, 0f), 1.0f, SpriteEffects.None, this.depth);
         }
 
     }

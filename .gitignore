@@ -1,7 +1,19 @@
-*.cache
+# binary folders
 bin
 obj
+
+# binaries
 *.exe
 *.dll
 *.nib
+
+# cache
 *.cachefile
+*.cache
+
+# art assets
+*.psd
+*.xcf
+
+# user-specific files
+*.user

@@ -11,40 +11,65 @@ namespace Poisson.Entities
 
     class Ship : Entity
     {
-        enum EHookState { UP = 0, DOWN = 1, RETRACTED = 2 } //maybe different hook types later
-        enum EShipState { SEEKING, HOOKING}
+        enum EHookState {
+            UP,
+            DOWN,
+            RETRACTED
+        } //maybe different hook types later
+
+        enum EShipState {
+            SEEKING, //movin' around
+            HOOKING  //throw dat bait Jimmy!
+        }
+
+        EHookState hookState;
+        EShipState shipState;
 
         int timeToNextHook;
 
         const float FRICTION = 0.99f;
-        const float BORING_HOOK_VEL = 3f;
-        const int BOTTOM_OF_SCREEN = 400;
+        const float BORING_HOOK_VEL = 5f;
+        const int   BOTTOM_OF_SCREEN = 400; //worst constant ever.
 
-        Rectangle hookRect;
+        const int TOP_OF_ROD = 20;        //ugly constants to keep the hook in the right place.
+        const int ROD_OFFSET = 227;
+        const int ROD_OFFSET_FLIP = 10;
+
+        private Rectangle _hookSpriteRect;
+        private Rectangle _hookRect;
+
+        public Rectangle hookRect
+        {
+            get {
+                return new Rectangle((int) hookPos.X + (int) Pos.X,
+                                     (int) Pos.Y + (int) hookPos.Y,
+                                      this._hookRect.Width,
+                                      this._hookRect.Width); //gross
+            }
+        }
+
         Vector2 hookPos;
-        EHookState hookState;
-        EShipState shipState;
         Texture2D hookSprite;
-
-        Random rseed;
+        Random rseed; //used for random interval hooking
 
         public Ship() : base()
         {
         }
 
         public Ship(Vector2 pos, float orient)
-            : base(pos, orient)
+            : base(pos, orient) 
         {
         }
 
         public override void Initialise(Game game)
         {
             SpriteTexture = game.Content.Load<Texture2D>("Art/spritesheet");
-            hookSprite = game.Content.Load<Texture2D>("Art/hook");
+            hookSprite = game.Content.Load<Texture2D>("Art/spritesheet");
+            this._hookSpriteRect = new Rectangle(0, 255, 16, 22);
             this.SpriteRect = new Rectangle(0, 0, 256, 164);
-            this.hookRect = new Rectangle(0, 0, 40, 40);
-            this.hookPos = new Vector2(this.Pos.X, this.Pos.Y);
-            this.hookState = EHookState.DOWN;
+            this._hookRect = new Rectangle(0, 0, 40, 40);
+            this.hookPos = new Vector2(ROD_OFFSET, 0);
+            this.hookState = EHookState.RETRACTED;
             this.Vel = new Vector2(3.0f, 0.0f);
             this.Facing = true;
             this.timeToNextHook = 4000;
@@ -69,7 +94,6 @@ namespace Poisson.Entities
             if (shipState == EShipState.SEEKING) {
                 this.Pos += this.Vel;
                 this.Orient += this.AngVel;
-                //this.Vel *= FRICTION;
             }
 
             if ((shipState == EShipState.SEEKING) && (gameTime.TotalGameTime.TotalMilliseconds >= this.timeToNextHook)) {
@@ -84,7 +108,7 @@ namespace Poisson.Entities
             switch (this.hookState) {
                 case EHookState.UP:
                     this.hookPos.Y -= BORING_HOOK_VEL;
-                    if (this.hookPos.Y <= this.Pos.Y) {
+                    if (this.hookPos.Y <= TOP_OF_ROD) {
                         this.hookState = EHookState.RETRACTED;
                         setShipToSeek(gameTime);
                     }
@@ -103,17 +127,22 @@ namespace Poisson.Entities
         {
             SpriteEffects spriteEffects = new SpriteEffects();
 
-            if (!Facing)
+            if (!Facing) {
                 spriteEffects = SpriteEffects.FlipHorizontally;
+                hookPos = new Vector2(ROD_OFFSET_FLIP, hookPos.Y);
+            } else {
+                hookPos = new Vector2(ROD_OFFSET, hookPos.Y);
+            }
 
             Rectangle destRect = new Rectangle((int)this.Pos.X, (int)this.Pos.Y, (int)SpriteRect.Width, (int)SpriteRect.Height);
             //batch.Draw(this.SpriteTexture, this.Pos, Color.White);
             batch.Draw(this.SpriteTexture, this.Pos,
                 this.SpriteRect, Color.White,
-                this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.0f);
-            batch.Draw(this.hookSprite, this.Pos+this.hookPos,
-                this.hookRect, Color.White,
-                this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.0f);    
+                this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.4f);
+
+            batch.Draw(this.hookSprite, this.Pos + this.hookPos,
+                _hookSpriteRect, Color.White,
+                this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.3f);    
         }
     }
 }

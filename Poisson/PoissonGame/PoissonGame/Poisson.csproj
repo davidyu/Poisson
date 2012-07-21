@@ -67,7 +67,7 @@
   <ItemGroup>
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Fish.cs" />
-    <Compile Include="Entities\Hook.cs" />
+    <Compile Include="Entities\Sea.cs" />
     <Compile Include="Entities\Ship.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\Animation.cs" />
