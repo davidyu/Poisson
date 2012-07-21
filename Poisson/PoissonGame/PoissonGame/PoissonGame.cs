@@ -131,11 +131,11 @@ namespace Poisson
         private void CheckCollisions()
         {
             // right now we only use one ship. Consider refactoring and using SAP when time comes to use multiple ships
-            foreach (Fish fish in fishes) {
-                if (fish.BoundingRect.Intersects((ships[0] as Ship).hookRect)) {
+            //foreach (Fish fish in fishes) {
+            //    if (fish.BoundingRect.Intersects((ships[0] as Ship).hookRect)) {
                     
-                }
-            }
+            //    }
+            //}
         }
 
         protected override void Draw(GameTime gameTime)

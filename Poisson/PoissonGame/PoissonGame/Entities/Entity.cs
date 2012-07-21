@@ -14,16 +14,16 @@ namespace Poisson.Entities
         public Vector2 Vel { get; set; }
         public float Orient { get; set; }
         public float AngVel { get; set; }
-        public bool Facing { get; set; }
+        public bool FacingLeft { get; set; }
 
         public Texture2D SpriteTexture { get; set; }
         public Rectangle SpriteRect { get; set; }
-
-        private Rectangle _bRect;
+       
+        public Rectangle bRect { get; set; }
 
         public Rectangle BoundingRect { 
-            get { return (new Rectangle((int)Pos.X, (int)Pos.Y, _bRect.Width, _bRect.Height)); }
-            set { _bRect = value; }
+            get { return (new Rectangle((int)Pos.X, (int)Pos.Y, bRect.Width, bRect.Height)); }
+            set { bRect = value; }
         }
 
         public Entity() { }

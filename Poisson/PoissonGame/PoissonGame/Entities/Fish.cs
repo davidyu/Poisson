@@ -107,7 +107,8 @@ namespace Poisson.Entities
 
         public void Hooked() //do-me: implement actions when hooked
         {
-            
+            this.Orient = 90f;
+            this.Pos = new Vector2(0.0f, 0.0f);
         }
 
         public override void Render(GameTime gameTime, SpriteBatch batch, Camera cam)
@@ -126,7 +127,7 @@ namespace Poisson.Entities
             Vector2 delta  = player.Pos - Pos;
             if (this.state == EFishState.STEERING)
             {
-                if (delta.Length() >= 200.0)
+                if (delta.Length() >= 300.0)
                 {
                     this.state = EFishState.SPONTANEOUS;
                     Random random = new Random();
@@ -144,7 +145,7 @@ namespace Poisson.Entities
             else if (this.state == EFishState.SPONTANEOUS)
             {
                 Vector2 dprime = target - Pos;
-                if (delta.Length() <= 50.0)
+                if (delta.Length() <= 200.0)
                 {
                     this.state = EFishState.STEERING;
                 }
