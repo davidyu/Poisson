@@ -126,8 +126,6 @@ namespace Poisson.Entities
                         this.Vel = new Vector2(0, 0);
                     }
                 }
-
-
             }
             
             //common update code at the end
@@ -157,7 +155,7 @@ namespace Poisson.Entities
 
         public override void Render(GameTime gameTime, SpriteBatch batch)
         {
-            _effects = _flipX ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            _effects = _flipX ? SpriteEffects.FlipHorizontally : SpriteEffects.None;  
             
             Rectangle destRect = new Rectangle((int)this.Pos.X, (int)this.Pos.Y, (int)SpriteRect.Width, (int)SpriteRect.Height);
             //batch.Draw(this.SpriteTexture, this.Pos, Color.White);
