@@ -65,6 +65,7 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Camera.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Fish.cs" />
     <Compile Include="Entities\Sea.cs" />

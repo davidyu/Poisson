@@ -23,7 +23,7 @@ namespace Poisson.Entities
         private bool          _flipX   = false;
         private SpriteEffects _effects = SpriteEffects.None;
 
-        const float FRICTION = 0.99f;
+        const float FRICTION = 0.90f;
         public bool isTouching { get; set; }
         Vector2 userTouch { get; set; }
         public bool inRoutine { get; set;}
@@ -58,25 +58,23 @@ namespace Poisson.Entities
             this.BoundingRect = new Rectangle(0, 0, 164, 64);
         }
 
-        private void PollInput()
+        private void PollInput(Camera cam)
         {
             TouchCollection tc = TouchPanel.GetState();
             foreach (TouchLocation tl in tc) {
                 if (tl.State == TouchLocationState.Pressed || tl.State == TouchLocationState.Moved) {
-                    _flipX = (Pos.X < tl.Position.X);
-                    Vector2 delta = tl.Position - Pos;
+                    _flipX = (Pos.X < cam.ScreenToWorld(tl.Position).X);
+                    Vector2 delta = cam.ScreenToWorld(tl.Position) - Pos;
                     delta.Normalize();
                     this.Vel = delta * 10;
-                } else {
-                    this.Vel *= 0.1f; //dampen vel
                 }
             }
         }
 
-        public override void Update(GameTime gameTime, List<Entity> entities, Entity player)
+        public override void Update(GameTime gameTime, List<Entity> entities, Entity player, Camera cam)
         {
             if (isHuman) {
-                PollInput();
+                PollInput(cam);
             } else {
                 //if they're within the radius of the human fishy, change attributes accordingly
                 if (Math.Abs(this.Pos.X - player.Pos.X) < 50 && Math.Abs(this.Pos.Y - player.Pos.Y) < 50)
@@ -155,7 +153,7 @@ namespace Poisson.Entities
             
         }
 
-        public override void Render(GameTime gameTime, SpriteBatch batch)
+        public override void Render(GameTime gameTime, SpriteBatch batch, Camera cam)
         {
             _effects = _flipX ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             

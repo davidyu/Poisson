@@ -35,9 +35,9 @@ namespace Poisson.Entities
 
         public virtual void Initialise(Game game) {}
 
-        public virtual void Update(GameTime gameTime, List<Entity> entities, Entity player) {}
+        public virtual void Update(GameTime gameTime, List<Entity> entities, Entity player, Camera cam) { }
 
-        public virtual void Render(GameTime gameTime, SpriteBatch batch) {}
+        public virtual void Render(GameTime gameTime, SpriteBatch batch, Camera cam) {}
 
         
     }
