@@ -50,8 +50,6 @@ namespace Poisson
             float SCREEN_WIDTH = (float)graphics.GraphicsDevice.Viewport.Width;
             float SCREEN_HEIGHT = (float)graphics.GraphicsDevice.Viewport.Height;
 
-            Matrix projection;
-
             camera = new Camera(0.5f);
 
             //this.projection = Matrix.CreateScale(SCREEN_WIDTH / 2560f, SCREEN_HEIGHT / 2400f, 1f);
@@ -126,19 +124,17 @@ namespace Poisson
                 sea.Update(gameTime, fishes, player, this.camera);
             }
 
-            player.Update(gameTime, ships, player, this.camera);
-
             base.Update(gameTime);
         }
 
         private void CheckCollisions()
         {
             // right now we only use one ship. Consider refactoring and using SAP when time comes to use multiple ships
-            foreach (Fish fish in fishes) {
-                if (fish.BoundingRect.Intersects((ships[0] as Ship).hookRect)) {
+            //foreach (Fish fish in fishes) {
+            //    if (fish.BoundingRect.Intersects((ships[0] as Ship).hookRect)) {
                     
-                }
-            }
+            //    }
+            //}
         }
 
         protected override void Draw(GameTime gameTime)
@@ -160,8 +156,6 @@ namespace Poisson
             foreach (Sea sea in this.seas) {
                 sea.Render(gameTime, this.spriteBatch, this.camera);
             }
-
-            player.Render(gameTime, this.spriteBatch, this.camera);
 
             spriteBatch.End();
 

@@ -8,6 +8,8 @@ namespace Poisson
 
     class MathUtils
     {
+        public static float circle = MathHelper.Pi * 2;
+
         public static Point VectorToPoint(Vector2 v)
         {
             return new Point(Convert.ToInt32(v.X), Convert.ToInt32(v.Y));

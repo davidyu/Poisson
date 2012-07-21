@@ -10,12 +10,15 @@ namespace Poisson
 
     class Ship : Entity
     {
+<<<<<<< HEAD
         enum EHookState
         {
             UP,
             DOWN,
             RETRACTED
         } //maybe different hook types later
+=======
+>>>>>>> 2dd49fb56f252d08c2645e3455aba24ac7b76d43
 
         enum EShipState
         {
@@ -24,7 +27,6 @@ namespace Poisson
             HOOKING,  //throw dat bait Jimmy!
         }
 
-        EHookState hookState;
         EShipState shipState;
 
         int timeToNextHook;
@@ -39,9 +41,9 @@ namespace Poisson
         const int ROD_OFFSET = 227;
         const int ROD_OFFSET_FLIP = 10;
 
-        private Rectangle _hookSpriteRect;
-        private Rectangle _hookRect;
+        private Entity hook;
 
+<<<<<<< HEAD
         public Rectangle hookRect
         {
             get
@@ -55,6 +57,8 @@ namespace Poisson
 
         Vector2 hookPos;
         Texture2D hookSprite;
+=======
+>>>>>>> 2dd49fb56f252d08c2645e3455aba24ac7b76d43
         Random rseed; //used for random interval hooking
 
         Vector2 shipDestination;
@@ -71,17 +75,16 @@ namespace Poisson
 
         public override void Initialise(Game game)
         {
-            SpriteTexture = game.Content.Load<Texture2D>("Art/spritesheet");
-            hookSprite = game.Content.Load<Texture2D>("Art/spritesheet");
-            this._hookSpriteRect = new Rectangle(0, 255, 16, 22);
+            this.hook = new Hook();
+            this.hook.Initialise(game);
+
+            this.SpriteTexture = game.Content.Load<Texture2D>("Art/spritesheet");
             this.SpriteRect = new Rectangle(0, 0, 256, 164);
-            this._hookRect = new Rectangle(0, 0, 40, 40);
-            this.hookPos = new Vector2(ROD_OFFSET, 0);
-            this.hookState = EHookState.RETRACTED;
+
             this.Vel = new Vector2(3.0f, 0.0f);
-            this.Facing = true;
+            this.FacingLeft = true;
             this.timeToNextHook = 4000;
-            this.rseed = new Random();
+            this.rseed = new Random();        
         }
 
         //need gameTime to reset timeToNextHook
@@ -121,22 +124,27 @@ namespace Poisson
             float newHookDestination = (float)(200/3*(rseed.Next(0,3)+200));
             this.hookDestination = new Vector2((float)(newHookDestination), this.Pos.Y);
             this.shipState = EShipState.HOOKING;
-            this.hookState = EHookState.DOWN;
         }
 
 
 
         public override void Update(GameTime gameTime, List<Entity> entities, Entity player, Camera cam)
         {
+            this.hook.Update(gameTime, entities, player, cam);
+
             switch (this.shipState) {
                 case EShipState.SEEKING:
                     break;
+<<<<<<< HEAD
                 case EShipState.WAITING:
                     break;
+=======
+>>>>>>> 2dd49fb56f252d08c2645e3455aba24ac7b76d43
                 case EShipState.HOOKING:
                     break;
             }
 
+<<<<<<< HEAD
             if (shipState == EShipState.SEEKING) {
                 if (Math.Abs(this.Pos.X - this.shipDestination.X) < 10.0)
                 {
@@ -145,30 +153,33 @@ namespace Poisson
             }
 
             if ((shipState == EShipState.WAITING) && (gameTime.TotalGameTime.TotalMilliseconds >= this.timeToNextHook)) {
+=======
+            if ((shipState == EShipState.SEEKING) && (gameTime.TotalGameTime.TotalMilliseconds >= this.timeToNextHook)) {
+>>>>>>> 2dd49fb56f252d08c2645e3455aba24ac7b76d43
                 setShipToHook();
             }
 
             if (this.Pos.X < 0.0f || this.Pos.X > 600) { //turn around if hit edge
                 this.Vel *= -1.0f;
-                this.Facing = !this.Facing;
+                this.FacingLeft = !this.FacingLeft;
             }
 
-            switch (this.hookState) {
-                case EHookState.UP:
-                    this.hookPos.Y -= BORING_HOOK_VEL;
-                    if (this.hookPos.Y <= TOP_OF_ROD) {
-                        this.hookState = EHookState.RETRACTED;
-                        setShipToSeek(gameTime);
-                    }
-                    break;
-                case EHookState.DOWN:
-                    this.hookPos.Y += BORING_HOOK_VEL;
-                    if (this.hookPos.Y >= BOTTOM_OF_SCREEN)
-                        this.hookState = EHookState.UP;
-                    break;
-                case EHookState.RETRACTED:
-                    break;
-            }
+            //switch (this.hookState) {
+            //    case EHookState.UP:
+            //        this.hookPos.Y -= BORING_HOOK_VEL;
+            //        if (this.hookPos.Y <= TOP_OF_ROD) {
+            //            this.hookState = EHookState.RETRACTED;
+            //            setShipToSeek(gameTime);
+            //        }
+            //        break;
+            //    case EHookState.DOWN:
+            //        this.hookPos.Y += BORING_HOOK_VEL;
+            //        if (this.hookPos.Y >= BOTTOM_OF_SCREEN)
+            //            this.hookState = EHookState.UP;
+            //        break;
+            //    case EHookState.RETRACTED:
+            //        break;
+            //}
 
             this.Pos += this.Vel;
             this.Vel *= FRICTION;
@@ -176,8 +187,10 @@ namespace Poisson
 
         public override void Render(GameTime gameTime, SpriteBatch batch, Camera cam)
         {
+            this.hook.Render(gameTime, batch, cam);
             SpriteEffects spriteEffects = new SpriteEffects();
 
+<<<<<<< HEAD
             if (!Facing)
             {
                 spriteEffects = SpriteEffects.FlipHorizontally;
@@ -186,17 +199,26 @@ namespace Poisson
             else
             {
                 hookPos = new Vector2(ROD_OFFSET, hookPos.Y);
+=======
+            if (!FacingLeft) {
+                spriteEffects = SpriteEffects.FlipHorizontally;
+                this.hook.Pos = new Vector2(ROD_OFFSET_FLIP, this.hook.Pos.Y);
+            } else {
+                this.hook.Pos = new Vector2(ROD_OFFSET, this.hook.Pos.Y);
+>>>>>>> 2dd49fb56f252d08c2645e3455aba24ac7b76d43
             }
 
             Rectangle destRect = new Rectangle((int)this.Pos.X, (int)this.Pos.Y, (int)SpriteRect.Width, (int)SpriteRect.Height);
-            //batch.Draw(this.SpriteTexture, this.Pos, Color.White);
             batch.Draw(this.SpriteTexture, this.Pos,
                 this.SpriteRect, Color.White,
                 this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.4f);
+<<<<<<< HEAD
 
             batch.Draw(this.hookSprite, this.Pos + this.hookPos,
                 _hookSpriteRect, Color.White,
                 this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.3f);
+=======
+>>>>>>> 2dd49fb56f252d08c2645e3455aba24ac7b76d43
         }
     }
 }
