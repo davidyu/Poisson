@@ -90,9 +90,15 @@ namespace Poisson
 
         public override void Update(GameTime gameTime, List<Entity> entities, Entity player, Camera cam)
         {
+            switch (this.shipState) {
+                case EShipState.SEEKING:
+                    break;
+                case EShipState.HOOKING;
+                    break;
+            }
+
             if (shipState == EShipState.SEEKING) {
-                this.Pos += this.Vel;
-                this.Orient += this.AngVel;
+                
             }
 
             if ((shipState == EShipState.SEEKING) && (gameTime.TotalGameTime.TotalMilliseconds >= this.timeToNextHook)) {
@@ -120,6 +126,9 @@ namespace Poisson
                 case EHookState.RETRACTED:
                     break;
             }
+
+            this.Pos += this.Vel;
+            this.Vel *= FRICTION;
         }
 
         public override void Render(GameTime gameTime, SpriteBatch batch, Camera cam)
