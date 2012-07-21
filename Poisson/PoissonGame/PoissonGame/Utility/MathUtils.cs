@@ -1,4 +1,4 @@
-namespace Poisson.Utility
+namespace Poisson
 {
     using System;
     using System.Collections.Generic;

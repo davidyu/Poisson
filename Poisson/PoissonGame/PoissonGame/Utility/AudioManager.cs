@@ -8,11 +8,15 @@
 #endregion
 
 #region Using Statements
+
+
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Xna.Framework.Media;
+
+
 #endregion
 
 namespace Poisson
@@ -22,20 +26,32 @@ namespace Poisson
     /// </summary>
     public class AudioManager : GameComponent
     {
-        #region Singleton
+        #region Fields
+
+
         /// <summary>
         /// The singleton for this type.
         /// </summary>
-        private static AudioManager audioManager = null;
+        static AudioManager audioManager = null;
+        public static AudioManager Instance
+        {
+            get
+            {
+                return audioManager;
+            }
+        }
+
+        static readonly string soundAssetLocation = "Sounds/";
+
+        // Audio Data        
+        Dictionary<string, SoundEffectInstance> soundBank;
+        Dictionary<string, Song> musicBank;
+
+
         #endregion
 
-        #region Audio Data
-        private SoundEffectInstance musicSound;
-        private Dictionary<string, SoundEffectInstance> soundBank;
-        private string[,] soundNames;
-        #endregion
+        #region Initialization
 
-        #region Initialization Methods
 
         private AudioManager(Game game)
             : base(game) { }
@@ -47,66 +63,131 @@ namespace Poisson
         public static void Initialize(Game game)
         {
             audioManager = new AudioManager(game);
+            audioManager.soundBank = new Dictionary<string, SoundEffectInstance>();
+            audioManager.musicBank = new Dictionary<string, Song>();
 
-            if (game != null)
-            {
-                game.Components.Add(audioManager);
-            }
+            game.Components.Add(audioManager);
         }
+
 
         #endregion
 
         #region Loading Methodes
+
+
         /// <summary>
-        /// Loads a sounds and organizes them for future usage
+        /// Loads a single sound into the sound manager, giving it a specified alias.
+        /// </summary>
+        /// <param name="contentName">The content name of the sound file. Assumes all sounds are located under
+        /// the "Sounds" folder in the content project.</param>
+        /// <param name="alias">Alias to give the sound. This will be used to identify the sound uniquely.</param>
+        /// <remarks>Loading a sound with an alias that is already used will have no effect.</remarks>
+        public static void LoadSound(string contentName, string alias)
+        {
+            SoundEffect soundEffect = audioManager.Game.Content.Load<SoundEffect>(soundAssetLocation + contentName);
+            SoundEffectInstance soundEffectInstance = soundEffect.CreateInstance();
+
+            if (!audioManager.soundBank.ContainsKey(alias))
+            {
+                audioManager.soundBank.Add(alias, soundEffectInstance);
+            }
+        }
+
+        /// <summary>
+        /// Loads a single song into the sound manager, giving it a specified alias.
+        /// </summary>
+        /// <param name="contentName">The content name of the sound file containing the song. Assumes all sounds are 
+        /// located under the "Sounds" folder in the content project.</param>
+        /// <param name="alias">Alias to give the song. This will be used to identify the song uniquely.</param>
+        /// /// <remarks>Loading a song with an alias that is already used will have no effect.</remarks>
+        public static void LoadSong(string contentName, string alias)
+        {
+            Song song = audioManager.Game.Content.Load<Song>(soundAssetLocation + contentName);
+
+            if (!audioManager.musicBank.ContainsKey(alias))
+            {
+                audioManager.musicBank.Add(alias, song);
+            }
+        }
+
+        /// <summary>
+        /// Loads and organizes the sounds used by the game.
         /// </summary>
         public static void LoadSounds()
         {
-            string soundLocation = "Sounds/";
-            audioManager.soundNames = new string[,] { 
-                            {"CatapultExplosion", "catapultExplosion"}, 
-                            {"Lose", "gameOver_Lose"},
-                            {"Win", "gameOver_Win"},
-                            {"BoulderHit", "boulderHit"},
-                            {"CatapultFire", "catapultFire"},
-                            {"RopeStretch", "ropeStretch"}};
-
-            audioManager.soundBank = new Dictionary<string, SoundEffectInstance>();
-
-            for (int i = 0; i < audioManager.soundNames.GetLength(0); i++)
-            {
-                SoundEffect se = audioManager.Game.Content.Load<SoundEffect>(
-                    soundLocation + audioManager.soundNames[i, 0]);
-                audioManager.soundBank.Add(
-                    audioManager.soundNames[i, 1], se.CreateInstance());
-            }
+            LoadSound("10SecondCountDown", "10SecondCountDown");
+            LoadSound("30SecondWarning", "30SecondWarning");
+            LoadSound("BeeBuzzing_Loop", "BeeBuzzing_Loop");
+            LoadSound("Defeat", "Defeat");
+            LoadSound("DepositingIntoVat_Loop", "DepositingIntoVat_Loop");
+            LoadSound("FillingHoneyPot_Loop", "FillingHoneyPot_Loop");
+            LoadSound("HighScore", "HighScore");
+            LoadSound("HoneyPotBreak", "HoneyPotBreak");
+            LoadSound("SmokeGun_Loop", "SmokeGun_Loop");
+            LoadSound("Stung", "Stung");
+            LoadSound("Stunned", "Stunned");
+            LoadSound("Victory", "Victory");
         }
+
+        /// <summary>
+        /// Loads and organizes the music used by the game.
+        /// </summary>
+        public static void LoadMusic()
+        {
+            LoadSong("InGameSong_Loop", "InGameSong_Loop");
+            LoadSong("MenuMusic_Loop", "MenuMusic_Loop");
+        }
+
         #endregion
 
         #region Sound Methods
+
+
+        /// <summary>
+        /// Indexer. Return a sound instance by name.
+        /// </summary>
+        public SoundEffectInstance this[string soundName]
+        {
+            get
+            {
+                if (audioManager.soundBank.ContainsKey(soundName))
+                {
+                    return audioManager.soundBank[soundName];
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
         /// <summary>
         /// Plays a sound by name.
         /// </summary>
-        /// <param name="soundName">The name of the sound to play</param>
+        /// <param name="soundName">The name of the sound to play.</param>
         public static void PlaySound(string soundName)
         {
             // If the sound exists, start it
             if (audioManager.soundBank.ContainsKey(soundName))
+            {
                 audioManager.soundBank[soundName].Play();
+            }
         }
 
         /// <summary>
         /// Plays a sound by name.
         /// </summary>
-        /// <param name="soundName">The name of the sound to play</param>
-        /// <param name="isLooped">Indicates if the sound should loop</param>
+        /// <param name="soundName">The name of the sound to play.</param>
+        /// <param name="isLooped">Indicates if the sound should loop.</param>
         public static void PlaySound(string soundName, bool isLooped)
         {
             // If the sound exists, start it
             if (audioManager.soundBank.ContainsKey(soundName))
             {
                 if (audioManager.soundBank[soundName].IsLooped != isLooped)
+                {
                     audioManager.soundBank[soundName].IsLooped = isLooped;
+                }
 
                 audioManager.soundBank[soundName].Play();
             }
@@ -114,75 +195,117 @@ namespace Poisson
 
 
         /// <summary>
+        /// Plays a sound by name.
+        /// </summary>
+        /// <param name="soundName">The name of the sound to play.</param>
+        /// <param name="isLooped">Indicates if the sound should loop.</param>
+        /// <param name="volume">Indicates if the volume</param>
+        public static void PlaySound(string soundName, bool isLooped, float volume)
+        {
+            // If the sound exists, start it
+            if (audioManager.soundBank.ContainsKey(soundName))
+            {
+                if (audioManager.soundBank[soundName].IsLooped != isLooped)
+                {
+                    audioManager.soundBank[soundName].IsLooped = isLooped;
+                }
+
+                audioManager.soundBank[soundName].Volume = volume;
+                audioManager.soundBank[soundName].Play();
+            }
+        }
+
+        /// <summary>
         /// Stops a sound mid-play. If the sound is not playing, this
         /// method does nothing.
         /// </summary>
-        /// <param name="soundName">The name of the sound to stop</param>
+        /// <param name="soundName">The name of the sound to stop.</param>
         public static void StopSound(string soundName)
         {
             // If the sound exists, stop it
             if (audioManager.soundBank.ContainsKey(soundName))
+            {
                 audioManager.soundBank[soundName].Stop();
+            }
         }
 
         /// <summary>
-        /// Stops a sound mid-play. If the sound is not playing, this
-        /// method does nothing.
+        /// Stops all currently playing sounds.
         /// </summary>
-        /// <param name="soundName">The name of the sound to stop</param>
         public static void StopSounds()
         {
-            var soundEffectInstances = from sound in audioManager.soundBank.Values
-                                       where sound.State != SoundState.Stopped
-                                       select sound;
-
-            foreach (var soundeffectInstance in soundEffectInstances)
-                soundeffectInstance.Stop();
+            foreach (SoundEffectInstance sound in audioManager.soundBank.Values)
+            {
+                if (sound.State != SoundState.Stopped)
+                {
+                    sound.Stop();
+                }
+            }
         }
 
         /// <summary>
-        /// Pause or Resume all sounds to support pause screen
+        /// Pause or resume all sounds.
         /// </summary>
-        /// <param name="isPause">Should pause or resume?</param>
-        public static void PauseResumeSounds(bool isPause)
+        /// <param name="resumeSounds">True to resume all paused sounds or false
+        /// to pause all playing sounds.</param>
+        public static void PauseResumeSounds(bool resumeSounds)
         {
-            SoundState state = isPause ? SoundState.Paused : SoundState.Playing;
+            SoundState state = resumeSounds ? SoundState.Paused : SoundState.Playing;
 
-            var soundEffectInstances = from sound in audioManager.soundBank.Values
-                                where sound.State == state
-                                select sound;
-
-            foreach (var soundeffectInstance in soundEffectInstances)
+            foreach (SoundEffectInstance sound in audioManager.soundBank.Values)
             {
-                if (isPause)
-                    soundeffectInstance.Play();
-                else
-                    soundeffectInstance.Pause();
+                if (sound.State == state)
+                {
+                    if (resumeSounds)
+                    {
+                        sound.Resume();
+                    }
+                    else
+                    {
+                        sound.Pause();
+                    }
+                }
             }
         }
         /// <summary>
-        /// Play music by sound name.
+        /// Play music by name. This stops the currently playing music first. Music will loop until stopped.
         /// </summary>
-        /// <param name="musicSoundName">The name of the music sound</param>
+        /// <param name="musicSoundName">The name of the music sound.</param>
+        /// <remarks>If the desired music is not in the music bank, nothing will happen.</remarks>
         public static void PlayMusic(string musicSoundName)
         {
-            // Stop the old music sound
-            if (audioManager.musicSound != null)
-                audioManager.musicSound.Stop(true);
-
             // If the music sound exists
-            if (audioManager.soundBank.ContainsKey(musicSoundName))
+            if (audioManager.musicBank.ContainsKey(musicSoundName))
             {
-                // Get the instance and start it
-                audioManager.musicSound = audioManager.soundBank[musicSoundName];
-                if (!audioManager.musicSound.IsLooped)
-                    audioManager.musicSound.IsLooped = true;
-                audioManager.musicSound.Play();
+                // Stop the old music sound
+                if (MediaPlayer.State != MediaState.Stopped)
+                {
+                    MediaPlayer.Stop();
+                }
+
+                MediaPlayer.IsRepeating = true;
+
+                MediaPlayer.Play(audioManager.musicBank[musicSoundName]);
             }
         }
+
+        /// <summary>
+        /// Stops the currently playing music.
+        /// </summary>
+        public static void StopMusic()
+        {
+            if (MediaPlayer.State != MediaState.Stopped)
+            {
+                MediaPlayer.Stop();
+            }
+        }
+
+
         #endregion
 
         #region Instance Disposal Methods
+
+
         /// <summary>
         /// Clean up the component when it is disposing.
         /// </summary>
@@ -205,6 +328,8 @@ namespace Poisson
                 base.Dispose(disposing);
             }
         }
+
+
         #endregion
     }
 }

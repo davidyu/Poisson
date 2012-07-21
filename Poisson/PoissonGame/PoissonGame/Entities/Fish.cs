@@ -1,4 +1,4 @@
-namespace Poisson.Entities
+namespace Poisson
 {
     using System;
     using System.Collections.Generic;
@@ -7,7 +7,6 @@ namespace Poisson.Entities
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
     using Microsoft.Xna.Framework.Input.Touch;
-    using Poisson.Utility;
     using System.Diagnostics;
 
     class Fish : Entity

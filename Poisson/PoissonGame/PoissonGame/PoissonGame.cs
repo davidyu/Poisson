@@ -13,7 +13,6 @@ namespace Poisson
     using Microsoft.Xna.Framework.Input.Touch;
     using Microsoft.Xna.Framework.Media;
     using System.Xml.Linq;
-    using Poisson.Entities;
 
     public class PoissonGame : Microsoft.Xna.Framework.Game
     {

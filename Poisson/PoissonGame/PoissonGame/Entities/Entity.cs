@@ -1,4 +1,4 @@
-namespace Poisson.Entities
+namespace Poisson
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,6 @@ namespace Poisson.Entities
     using System.Text;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
-    using Poisson.Utility;
 
     class Entity
     {

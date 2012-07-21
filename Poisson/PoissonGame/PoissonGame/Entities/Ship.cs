@@ -1,4 +1,4 @@
-namespace Poisson.Entities
+namespace Poisson
 {
     using System;
     using System.Collections.Generic;
@@ -7,7 +7,6 @@ namespace Poisson.Entities
     using System.Diagnostics;
     using Microsoft.Xna.Framework.Graphics;
     using Microsoft.Xna.Framework;
-    using Poisson.Utility;
 
     class Ship : Entity
     {
