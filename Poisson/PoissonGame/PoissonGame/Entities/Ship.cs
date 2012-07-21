@@ -29,9 +29,9 @@ namespace Poisson.Entities
 
         const float FRICTION = 0.99f;
         const float BORING_HOOK_VEL = 5f;
-        const int BOTTOM_OF_SCREEN = 400; //worst constant ever.
+        const int   BOTTOM_OF_SCREEN = 400; //worst constant ever.
 
-        const int TOP_OF_ROD = 20;        //ugly constants to keep the hook in the right place. Kill me now.
+        const int TOP_OF_ROD = 20;        //ugly constants to keep the hook in the right place.
         const int ROD_OFFSET = 227;
         const int ROD_OFFSET_FLIP = 10;
 
@@ -94,7 +94,6 @@ namespace Poisson.Entities
             if (shipState == EShipState.SEEKING) {
                 this.Pos += this.Vel;
                 this.Orient += this.AngVel;
-                //this.Vel *= FRICTION;
             }
 
             if ((shipState == EShipState.SEEKING) && (gameTime.TotalGameTime.TotalMilliseconds >= this.timeToNextHook)) {
@@ -128,13 +127,10 @@ namespace Poisson.Entities
         {
             SpriteEffects spriteEffects = new SpriteEffects();
 
-            if (!Facing)
-            {
+            if (!Facing) {
                 spriteEffects = SpriteEffects.FlipHorizontally;
                 hookPos = new Vector2(ROD_OFFSET_FLIP, hookPos.Y);
-            }
-            else
-            {
+            } else {
                 hookPos = new Vector2(ROD_OFFSET, hookPos.Y);
             }
 
