@@ -51,8 +51,6 @@ namespace Poisson
             float SCREEN_WIDTH = (float)graphics.GraphicsDevice.Viewport.Width;
             float SCREEN_HEIGHT = (float)graphics.GraphicsDevice.Viewport.Height;
 
-            Matrix projection;
-
             camera = new Camera(0.5f);
 
             //this.projection = Matrix.CreateScale(SCREEN_WIDTH / 2560f, SCREEN_HEIGHT / 2400f, 1f);

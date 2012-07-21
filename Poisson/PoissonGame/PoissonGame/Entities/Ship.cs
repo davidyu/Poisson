@@ -38,6 +38,8 @@ namespace Poisson.Entities
         private Rectangle _hookSpriteRect;
         private Rectangle _hookRect;
 
+        private Entity hook;
+
         public Rectangle hookRect
         {
             get {
@@ -64,12 +66,8 @@ namespace Poisson.Entities
         public override void Initialise(Game game)
         {
             SpriteTexture = game.Content.Load<Texture2D>("Art/spritesheet");
-            hookSprite = game.Content.Load<Texture2D>("Art/spritesheet");
-            this._hookSpriteRect = new Rectangle(0, 255, 16, 22);
             this.SpriteRect = new Rectangle(0, 0, 256, 164);
-            this._hookRect = new Rectangle(0, 0, 40, 40);
-            this.hookPos = new Vector2(ROD_OFFSET, 0);
-            this.hookState = EHookState.RETRACTED;
+
             this.Vel = new Vector2(3.0f, 0.0f);
             this.Facing = true;
             this.timeToNextHook = 4000;
@@ -94,13 +92,10 @@ namespace Poisson.Entities
             switch (this.shipState) {
                 case EShipState.SEEKING:
                     break;
-                case EShipState.HOOKING;
+                case EShipState.HOOKING:
                     break;
             }
 
-            if (shipState == EShipState.SEEKING) {
-                
-            }
 
             if ((shipState == EShipState.SEEKING) && (gameTime.TotalGameTime.TotalMilliseconds >= this.timeToNextHook)) {
                 setShipToHook();
