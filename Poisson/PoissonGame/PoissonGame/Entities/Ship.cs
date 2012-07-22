@@ -68,15 +68,17 @@ using Poisson.Entities;
 
             this.Vel = new Vector2(3.0f, 0.0f);
             this.FacingLeft = true;
-            this.timeToNextHook = 4000;
-            this.rseed = new Random();        
+            //this.timeToNextHook = 4000;
+            this.rseed = new Random();
+            this.setShipToSeek();
         }
 
         //need gameTime to reset timeToNextHook
-        private void setShipToSeek(GameTime gameTime)
+        private void setShipToSeek()
         {
             //while newDestination is not too close to this.Pos.X, generate newDest value
-            float newDestination = rseed.Next(1, 4) * 200 - 100;
+            float newDestination = (rseed.Next(1, 4) * 200 - 150)*2;
+            Debug.WriteLine("Destination " + newDestination);
             //determine ships destination
             //if (newDestination < this.Pos.X) //FLIP THE SHIP TO FACE LEFT
             //{
@@ -94,20 +96,20 @@ using Poisson.Entities;
             this.shipDestination = new Vector2((float)(newDestination), this.Pos.Y); //SET DESTINATION
 
             this.shipState = EShipState.SEEKING;
-            //this.timeToNextHook = (int)gameTime.TotalGameTime.TotalMilliseconds + rseed.Next(0, 4000);
         }
 
         private void setShipToWait(GameTime gameTime)
         {
             this.Vel = new Vector2(0.0f, 0.0f);
             this.shipState = EShipState.WAITING;
-            this.timeToNextHook = (int)gameTime.TotalGameTime.TotalMilliseconds + 100; //set the time to send the hook down!
+            this.timeToNextHook = (int)gameTime.TotalGameTime.TotalMilliseconds + 1000; //set the time to send the hook down!
         }
 
         private void setShipToHook()
         {
             float newHookDestination = (float)(200/3*(rseed.Next(0,3)+200));
             //this.hookDestination = new Vector2((float)(newHookDestination), this.Pos.Y);
+            //this.hookVel = 
             this.shipState = EShipState.HOOKING;
         }
 
@@ -133,8 +135,9 @@ using Poisson.Entities;
                 }
             }
 
-            if ((shipState == EShipState.SEEKING) && (gameTime.TotalGameTime.TotalMilliseconds >= this.timeToNextHook)) {
-                setShipToHook();
+            if ((shipState == EShipState.WAITING) && (gameTime.TotalGameTime.TotalMilliseconds >= this.timeToNextHook)) {
+                setShipToSeek();
+                //setShipToHook();
             }
 
             if (this.Pos.X < 0.0f || this.Pos.X > 600) { //turn around if hit edge
@@ -160,7 +163,7 @@ using Poisson.Entities;
             //}
 
             this.Pos += this.Vel;
-            this.Vel *= FRICTION;
+            //this.Vel *= FRICTION;
         }
 
         public override void Render(GameTime gameTime, SpriteBatch batch, Camera cam)
