@@ -22,7 +22,7 @@ namespace Poisson
 
         int timeToNextHook;
 
-        const float movingVel = 5f;
+        const float movingVel = 6f;
 
         const float FRICTION = 0.99f;
         const float BORING_HOOK_VEL = 5f;
@@ -67,8 +67,12 @@ namespace Poisson
         //need gameTime to reset timeToNextHook
         private void setShipToSeek()
         {
-            //while newDestination is not too close to this.Pos.X, generate newDest value
-            float newDestination = (rseed.Next(1, 4) * 200 - 150)*2;
+            
+            float newDestination = (rseed.Next(0, 4) * 300 + 200); //select 4 locaons (includes min value)
+            while (Math.Abs(newDestination - this.Pos.X) < 10)
+            {
+                newDestination = (rseed.Next(0, 4) * 300 + 200);
+            }
             Debug.WriteLine("Destination " + newDestination);
             //determine ships destination
             //if (newDestination < this.Pos.X) //FLIP THE SHIP TO FACE LEFT
@@ -78,11 +82,11 @@ namespace Poisson
             //}
             if (newDestination < this.Pos.X) //SET VELOCITY
             {
-                this.Vel = new Vector2(-3.0f, 0.0f);
+                this.Vel = new Vector2(-movingVel, 0.0f);
             }
             else
             {
-                this.Vel = new Vector2(3.0f, 0.0f);
+                this.Vel = new Vector2(movingVel, 0.0f);
             }
             this.shipDestination = new Vector2((float)(newDestination), this.Pos.Y); //SET DESTINATION
 
@@ -98,7 +102,7 @@ namespace Poisson
 
         private void setShipToHook()
         {
-            float newHookDestination = (float)(200/3*(rseed.Next(0,3)+200));
+            float newHookDestination = (float)(200/3*(rseed.Next(0,4)+200)); //select 3 locations
             //this.hookDestination = new Vector2((float)(newHookDestination), this.Pos.Y);
             //this.hookVel = 
             this.shipState = EShipState.HOOKING;
@@ -116,7 +120,7 @@ namespace Poisson
 
             switch (this.shipState) {
                 case EShipState.SEEKING:
-                    this.Vel = new Vector2(1.0f, 0.0f);
+                    //this.Vel = new Vector2(1.0f, 0.0f);
                     break;
                 case EShipState.WAITING:
                     break;
@@ -136,11 +140,39 @@ namespace Poisson
                 //setShipToHook();
             }
 
-            if (this.Pos.X < 0.0f || this.Pos.X > 600) { //turn around if hit edge
-                this.Vel *= -1.0f;
-                this.FacingLeft = !this.FacingLeft;
+            //if (this.Pos.X < 0.0f || this.Pos.X > 1300) { //turn around if hit edge
+            //    this.Vel *= -1.0f;
+            //    this.FacingLeft = !this.FacingLeft;
+            //}
+
+<<<<<<< HEAD
+=======
+            if (!this.FacingLeft) {
+                this.hook.Pos = new Vector2(ROD_OFFSET_FLIP, this.hook.Pos.Y);
+            }
+            else {
+                this.hook.Pos = new Vector2(ROD_OFFSET, this.hook.Pos.Y);
+            } 
+            switch (this.hook.HookState) {
+                case Hook.EHookState.MOVING:
+                    Vector2 pos = this.hook.Pos;
+                    pos.Y -= BORING_HOOK_VEL;
+                    this.hook.Pos = pos;
+                    if (pos.Y <= TOP_OF_ROD) {
+                        this.hook.HookState = Hook.EHookState.RETRACTED;
+                        setShipToSeek();
+                    }
+                    break;
+                //case Hook.EHookState.DOWN:
+                //    this.hookPos.Y += BORING_HOOK_VEL;
+                //    if (this.hookPos.Y >= BOTTOM_OF_SCREEN)
+                //        this.hookState = EHookState.UP;
+                //    break;
+                case Hook.EHookState.RETRACTED:
+                    break;
             }
 
+>>>>>>> a40f4d66d5b81f73305b44fc57654c39ab808f54
             this.Pos += this.Vel;
             //this.Vel *= FRICTION;
         }
