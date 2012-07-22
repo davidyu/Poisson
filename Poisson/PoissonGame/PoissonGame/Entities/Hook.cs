@@ -6,6 +6,7 @@ namespace Poisson.Entities
     using System.Text;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
+    using System.Diagnostics;
 
     class Hook : Entity
     {
@@ -19,6 +20,7 @@ namespace Poisson.Entities
         public EHookState HookState { get; set; }
         int stateticks;
         bool hasFish;
+        public float HookDepthDestination { get; set; }
 
         public Rectangle HookRect
         {
@@ -45,6 +47,8 @@ namespace Poisson.Entities
             
             this.stateticks = 0;
             this.hasFish = false;
+            this.HookDepthDestination = 500f;
+            this.Vel = Vector2.Zero;
         }
 
         public override void Update(GameTime gameTime, List<Entity> entities, Entity player, Camera cam)
@@ -53,16 +57,22 @@ namespace Poisson.Entities
                 case EHookState.RETRACTED:
                     break;
                 case EHookState.MOVING:
+                    this.Vel = new Vector2(0f, 3f);
+                    if (this.Pos.Y > HookDepthDestination) {
+                        this.HookState = EHookState.WAITING;
+                        this.Vel = Vector2.Zero;
+                    }
                     break;
                 case EHookState.WAITING:
                     break;
             }
-            //this.Pos += this.Vel;
+            Debug.WriteLine(this.HookState.ToString());
+            this.Pos += this.Vel;
 
             if (!this.hasFish) {
                 foreach (Fish fish in entities) {
                     if (this.IsCollided(fish)) {
-                        this.HookState = EHookState.GRABBED;
+                        this.HookState = EHookState.MOVING;
                         fish.Hooked();
                     }
                 }
@@ -79,7 +89,7 @@ namespace Poisson.Entities
 
             batch.Draw(this.SpriteTexture, this.Pos,
                 this.SpriteRect, Color.White,
-                this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.4f);
+                this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.2f);
         }
 
         private bool IsCollided(Entity entity)

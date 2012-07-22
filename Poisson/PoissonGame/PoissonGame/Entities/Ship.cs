@@ -7,7 +7,7 @@ namespace Poisson
     using System.Diagnostics;
     using Microsoft.Xna.Framework.Graphics;
     using Microsoft.Xna.Framework;
-using Poisson.Entities;
+    using Poisson.Entities;
 
     class Ship : Entity
     {
@@ -120,6 +120,12 @@ using Poisson.Entities;
 
         public override void Update(GameTime gameTime, List<Entity> entities, Entity player, Camera cam)
         {
+            if (!this.FacingLeft) {
+                this.hook.Pos = new Vector2((float)ROD_OFFSET_FLIP+this.Pos.X, this.hook.Pos.Y);
+            }
+            else {
+                this.hook.Pos = new Vector2((float)ROD_OFFSET+this.Pos.X, this.hook.Pos.Y);
+            } 
             this.hook.Update(gameTime, entities, player, cam);
 
             switch (this.shipState) {
@@ -149,6 +155,8 @@ using Poisson.Entities;
             //    this.FacingLeft = !this.FacingLeft;
             //}
 
+<<<<<<< HEAD
+=======
             if (!this.FacingLeft) {
                 this.hook.Pos = new Vector2(ROD_OFFSET_FLIP, this.hook.Pos.Y);
             }
@@ -174,6 +182,7 @@ using Poisson.Entities;
                     break;
             }
 
+>>>>>>> a40f4d66d5b81f73305b44fc57654c39ab808f54
             this.Pos += this.Vel;
             //this.Vel *= FRICTION;
         }
