@@ -66,28 +66,15 @@ namespace Poisson
 
         #region Update and Draw
 
-
-        /// <summary>
-        /// Allows the screen to run logic, such as updating the transition position.
-        /// Unlike HandleInput, this method is called regardless of whether the screen
-        /// is active, hidden, or in the middle of a transition.
-        /// </summary>
         public virtual void Update(GameTime gameTime)
         {
         }
 
-
-
-        /// <summary>
-        /// This is called when the screen should draw itself.
-        /// </summary>
         public virtual void Draw(GameTime gameTime) { }
-
 
         #endregion
 
         #region Public Methods
-
 
         #endregion
 

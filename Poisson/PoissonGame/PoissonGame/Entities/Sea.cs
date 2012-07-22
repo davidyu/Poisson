@@ -28,7 +28,7 @@ namespace Poisson
             Vector2 tempPos = this.Pos;
 
             this.Pos += this.Vel;
-            if (this.Pos.X > this.SpriteRect.Width) {
+            if (this.Pos.X > this.SpriteRect.Width*2) {
                 tempPos.X -= this.SpriteRect.Width;
                 this.Pos = tempPos;
             } else if (this.Pos.X < 0) {
@@ -42,7 +42,7 @@ namespace Poisson
             batch.Draw(this.SpriteTexture, this.Pos,
                 this.SpriteRect, Color.White,
                 this.Orient, new Vector2(0f, 0f), 2.0f, SpriteEffects.None, this.depth);
-            batch.Draw(this.SpriteTexture, this.Pos- new Vector2(this.SpriteRect.Width, 0.0f),
+            batch.Draw(this.SpriteTexture, this.Pos- cam.ScreenToWorld(new Vector2(this.SpriteRect.Width, 0.0f)),
                this.SpriteRect, Color.White,
                this.Orient, new Vector2(0f, 0f), 2.0f, SpriteEffects.None, this.depth);
         }
