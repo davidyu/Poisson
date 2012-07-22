@@ -16,17 +16,11 @@ using System.IO;
 
 namespace Poisson
 {
-    /// <summary>
-    /// The screen manager is a component which manages one or more GameScreen
-    /// instances. It maintains a stack of screens, calls their Update and Draw
-    /// methods at the appropriate times, and automatically routes input to the
-    /// topmost active screen.
-    /// </summary>
     public class ScreenManager : DrawableGameComponent
     {
         #region Fields
 
-        List<GameScreen> screens = new List<GameScreen>();
+        Stack<GameScreen> screens = new Stack<GameScreen>();
 
         bool isInitialized;
         bool traceEnabled;
@@ -93,6 +87,8 @@ namespace Poisson
 
         public override void Update(GameTime gameTime)
         {
+            this.screens.Peek().Update(gameTime);
+
             // Print debug trace?
             if (traceEnabled)
                 TraceScreens();
@@ -111,13 +107,7 @@ namespace Poisson
 
         public override void Draw(GameTime gameTime)
         {
-            foreach (GameScreen screen in screens)
-            {
-                if (screen.ScreenState == ScreenState.Hidden)
-                    continue;
-
-                screen.Draw(gameTime);
-            }
+           screens.Peek().Draw(gameTime);
         }
 
 
@@ -125,32 +115,19 @@ namespace Poisson
 
         #region Public Methods
 
-        public void AddScreen(GameScreen screen, PlayerIndex? controllingPlayer)
+        public void PushScreen(GameScreen screen)
         {
+            this.screens.Push(screen);
+            screen.LoadContent();
         }
 
-        public void RemoveScreen(GameScreen screen)
+        public void PopScreen()
         {
-            // If we have a graphics device, tell the screen to unload content.
-            if (isInitialized)
-            {
-                screen.UnloadContent();
-            }
+            this.screens.Peek().UnloadContent();
+            this.screens.Pop();
 
-            screens.Remove(screen);
-
-            if (screens.Count > 0)
-            {
-                TouchPanel.EnabledGestures = screens[screens.Count - 1].EnabledGestures;
-            }
         }
 
-
-        /// <summary>
-        /// Expose an array holding all the screens. We return a copy rather
-        /// than the real master list, because screens should only ever be added
-        /// or removed using the AddScreen and RemoveScreen methods.
-        /// </summary>
         public GameScreen[] GetScreens()
         {
             return screens.ToArray();
