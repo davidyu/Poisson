@@ -7,7 +7,7 @@ namespace Poisson
     using System.Diagnostics;
     using Microsoft.Xna.Framework.Graphics;
     using Microsoft.Xna.Framework;
-using Poisson.Entities;
+    using Poisson.Entities;
 
     class Ship : Entity
     {
@@ -106,6 +106,12 @@ using Poisson.Entities;
 
         public override void Update(GameTime gameTime, List<Entity> entities, Entity player, Camera cam)
         {
+            if (!this.FacingLeft) {
+                this.hook.Pos = new Vector2((float)ROD_OFFSET_FLIP+this.Pos.X, this.hook.Pos.Y);
+            }
+            else {
+                this.hook.Pos = new Vector2((float)ROD_OFFSET+this.Pos.X, this.hook.Pos.Y);
+            } 
             this.hook.Update(gameTime, entities, player, cam);
 
             switch (this.shipState) {
@@ -133,31 +139,6 @@ using Poisson.Entities;
             if (this.Pos.X < 0.0f || this.Pos.X > 600) { //turn around if hit edge
                 this.Vel *= -1.0f;
                 this.FacingLeft = !this.FacingLeft;
-            }
-
-            if (!this.FacingLeft) {
-                this.hook.Pos = new Vector2(ROD_OFFSET_FLIP, this.hook.Pos.Y);
-            }
-            else {
-                this.hook.Pos = new Vector2(ROD_OFFSET, this.hook.Pos.Y);
-            } 
-            switch (this.hook.HookState) {
-                case Hook.EHookState.MOVING:
-                    Vector2 pos = this.hook.Pos;
-                    pos.Y -= BORING_HOOK_VEL;
-                    this.hook.Pos = pos;
-                    if (pos.Y <= TOP_OF_ROD) {
-                        this.hook.HookState = Hook.EHookState.RETRACTED;
-                        setShipToSeek(gameTime);
-                    }
-                    break;
-                //case Hook.EHookState.DOWN:
-                //    this.hookPos.Y += BORING_HOOK_VEL;
-                //    if (this.hookPos.Y >= BOTTOM_OF_SCREEN)
-                //        this.hookState = EHookState.UP;
-                //    break;
-                case Hook.EHookState.RETRACTED:
-                    break;
             }
 
             this.Pos += this.Vel;
