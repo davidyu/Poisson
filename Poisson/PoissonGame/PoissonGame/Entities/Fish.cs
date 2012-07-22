@@ -17,7 +17,7 @@ namespace Poisson.Entities
             STEERING,     //follow Poisson! Poisson is perpetually in this mode
             SPONTANEOUS,  //random movement
             HOOKED,       //Jimmy John got you, you poor thing
-            DEAD,          //just before being removed from screen
+            DEAD,         //just before being removed from screen
             WAIT
         }
 
@@ -28,6 +28,7 @@ namespace Poisson.Entities
         private Vector2       target = new Vector2(0, 0);
 
         const float FRICTION = 0.90f;
+        const float ANG_FRICTION = 0.75f;
         public bool inRoutine { get; set;}
         GameTime routineStartTime {get; set;}
         Vector2 targetPoint {get; set; }
@@ -60,15 +61,22 @@ namespace Poisson.Entities
             }
 
             this.BoundingRect = new Rectangle(0, 0, 164, 64);
+            this.AngVel = 0.0f;
+        }
+
+        private void Thrust()
+        {
+            this.Vel = 10 * new Vector2((float)Math.Cos(this.rotation), (float)Math.Sin(this.rotation));
         }
 
         private void PollInput(Camera cam)
         {
             TouchCollection tc = TouchPanel.GetState();
             foreach (TouchLocation tl in tc) {
-                if (tl.State == TouchLocationState.Pressed || tl.State == TouchLocationState.Moved) {
+                if (tl.State == TouchLocationState.Moved || tl.State == TouchLocationState.Pressed) {
                     Vector2 touchPos = cam.ScreenToWorld(tl.Position); //converted to camera pos
                     MoveTowards(touchPos, 10);
+                    Thrust();
                 }
             }
         }
@@ -115,8 +123,11 @@ namespace Poisson.Entities
             }
             
             //common update code at the end
+            this.AngVel *= ANG_FRICTION;
+            this.rotation += this.AngVel;
+            this.rotation %= 2 * MathUtils.circle;
+            
             this.Pos += this.Vel;
-            this.Orient += this.AngVel;
             this.Vel *= FRICTION;
         }
 
@@ -126,19 +137,24 @@ namespace Poisson.Entities
             this.target = new Vector2((float)random.NextDouble() * 800.0f, (float)random.NextDouble() * 480.0f);
         }
 
+        //do-me: MoveTowards and MoveAwayFrom are too similar! Refactor into one method!
         private void MoveTowards(Vector2 loc, float intensity)
         {
             Vector2 delta = loc - Pos;
-            this.rotation = (float)Math.Atan2(Pos.Y - loc.Y, Pos.X - loc.X) % MathUtils.circle;
-            this.flipX = (Pos.X < loc.X);
+            delta.X = (float)(Math.Cos(-rotation) * delta.X - Math.Sin(-rotation) * delta.Y);
+            delta.Y = (float)(Math.Sin(-rotation) * delta.X + Math.Cos(-rotation) * delta.Y);
             delta.Normalize();
-            this.Vel = delta * intensity;
+            this.AngVel += Math.Sign(delta.Y) * 0.1f;
+
+            this.flipX = (Pos.X < loc.X);
+            this.Orient = this.flipX ? (float)Math.Atan2(loc.Y - Pos.Y, loc.X - Pos.X) : (float)Math.Atan2(Pos.Y - loc.Y, Pos.X - loc.X);
+            //this.Vel = delta * intensity;
         }
 
         private void MoveAwayFrom(Vector2 loc, float intensity)
         {
             Vector2 delta = Pos - loc;
-            this.rotation = (float)Math.Atan2(loc.Y - Pos.Y, loc.X - Pos.X) % MathUtils.circle;
+            this.AngVel = ((float)Math.Atan2(loc.Y - Pos.Y, loc.X - Pos.X) % MathUtils.circle - this.Orient) / 10;
             this.flipX = (Pos.X < loc.X);
             delta.Normalize();
             this.Vel = delta * intensity;
@@ -152,12 +168,11 @@ namespace Poisson.Entities
         public override void Render(GameTime gameTime, SpriteBatch batch, Camera cam)
         {
             this.effects = this.flipX ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            this.Orient  = this.flipX ? this.rotation - MathUtils.circle/2 : this.rotation;
             
             Rectangle destRect = new Rectangle((int)this.Pos.X, (int)this.Pos.Y, (int)SpriteRect.Width, (int)SpriteRect.Height);
             batch.Draw(this.SpriteTexture, this.Pos,
                 this.SpriteRect, Color.White,
-                this.Orient, new Vector2(SpriteRect.Width/2, SpriteRect.Height/2), 1.0f, this.effects, 0.0f);
+                this.Orient, new Vector2((float) SpriteRect.Width/2, SpriteRect.Height/2), 1.0f, this.effects, 0.0f);
         }
     }
 }
