@@ -69,33 +69,24 @@ namespace Poisson
         {
             
             float newDestination = (rseed.Next(0, 4) * 300 + 200); //select 4 locaons (includes min value)
-            while (Math.Abs(newDestination - this.Pos.X) < 10)
-            {
+            while (Math.Abs(newDestination - this.Pos.X) < 10) {
                 newDestination = (rseed.Next(0, 4) * 300 + 200);
             }
             Debug.WriteLine("Destination " + newDestination);
             //determine ships destination
-            if (newDestination < this.Pos.X) //FLIP THE SHIP TO FACE LEFT
-            {
-                if (FacingLeft) //ACTUALLY FACING RIGHT
-                {
+            if (newDestination < this.Pos.X) { //FLIP THE SHIP TO FACE LEFT
+                if (FacingLeft) { //ACTUALLY FACING RIGHT
                     FacingLeft = false;
                 }
-            }
-            else
-            {
-                if (!FacingLeft)
-                {
+            } else {
+                if (!FacingLeft) {
                     FacingLeft = true;
                 }
             }
 
-            if (newDestination < this.Pos.X) //SET VELOCITY
-            {
+            if (newDestination < this.Pos.X) { //SET VELOCITY
                 this.Vel = new Vector2(-movingVel, 0.0f);
-            }
-            else
-            {
+            } else {
                 this.Vel = new Vector2(movingVel, 0.0f);
             }
             this.shipDestination = new Vector2((float)(newDestination), this.Pos.Y); //SET DESTINATION
@@ -155,34 +146,31 @@ namespace Poisson
             //    this.FacingLeft = !this.FacingLeft;
             //}
 
-<<<<<<< HEAD
-=======
             if (!this.FacingLeft) {
-                this.hook.Pos = new Vector2(ROD_OFFSET_FLIP, this.hook.Pos.Y);
+                this.hook.Pos = new Vector2(ROD_OFFSET_FLIP + this.Pos.X, this.hook.Pos.Y);
             }
             else {
-                this.hook.Pos = new Vector2(ROD_OFFSET, this.hook.Pos.Y);
+                this.hook.Pos = new Vector2(ROD_OFFSET + this.Pos.X, this.hook.Pos.Y);
             } 
-            switch (this.hook.HookState) {
-                case Hook.EHookState.MOVING:
-                    Vector2 pos = this.hook.Pos;
-                    pos.Y -= BORING_HOOK_VEL;
-                    this.hook.Pos = pos;
-                    if (pos.Y <= TOP_OF_ROD) {
-                        this.hook.HookState = Hook.EHookState.RETRACTED;
-                        setShipToSeek();
-                    }
-                    break;
-                //case Hook.EHookState.DOWN:
-                //    this.hookPos.Y += BORING_HOOK_VEL;
-                //    if (this.hookPos.Y >= BOTTOM_OF_SCREEN)
-                //        this.hookState = EHookState.UP;
-                //    break;
-                case Hook.EHookState.RETRACTED:
-                    break;
-            }
+            //switch (this.hook.HookState) {
+            //    case Hook.EHookState.MOVING:
+            //        Vector2 pos = this.hook.Pos;
+            //        pos.Y -= BORING_HOOK_VEL;
+            //        this.hook.Pos = pos;
+            //        if (pos.Y <= TOP_OF_ROD) {
+            //            this.hook.HookState = Hook.EHookState.RETRACTED;
+            //            setShipToSeek();
+            //        }
+            //        break;
+            //    //case Hook.EHookState.DOWN:
+            //    //    this.hookPos.Y += BORING_HOOK_VEL;
+            //    //    if (this.hookPos.Y >= BOTTOM_OF_SCREEN)
+            //    //        this.hookState = EHookState.UP;
+            //    //    break;
+            //    case Hook.EHookState.RETRACTED:
+            //        break;
+            //}
 
->>>>>>> a40f4d66d5b81f73305b44fc57654c39ab808f54
             this.Pos += this.Vel;
             //this.Vel *= FRICTION;
         }
@@ -199,9 +187,7 @@ namespace Poisson
             }
             if (!FacingLeft) {
                 spriteEffects = SpriteEffects.FlipHorizontally;
-                this.hook.Pos = new Vector2(ROD_OFFSET_FLIP, this.hook.Pos.Y);
             } else {
-                this.hook.Pos = new Vector2(ROD_OFFSET, this.hook.Pos.Y);
             }
 
             Rectangle destRect = new Rectangle((int)this.Pos.X, (int)this.Pos.Y, (int)SpriteRect.Width, (int)SpriteRect.Height);
