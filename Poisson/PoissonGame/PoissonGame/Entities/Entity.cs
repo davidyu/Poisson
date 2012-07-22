@@ -17,17 +17,12 @@ namespace Poisson
 
         public Texture2D SpriteTexture { get; set; }
         public Rectangle SpriteRect { get; set; }
-<<<<<<< HEAD
        
         public Rectangle bRect { get; set; }
-=======
-
-        private Rectangle bRect;
->>>>>>> c8ed20d8917b0c403585cef5e398161d0749984f
 
         public Rectangle BoundingRect { 
-            get { return (new Rectangle((int)Pos.X, (int)Pos.Y, bRect.Width, bRect.Height)); }
-            set { bRect = value; }
+            get { return (new Rectangle((int)Pos.X, (int)Pos.Y, this.bRect.Width, this.bRect.Height)); }
+            set { this.bRect = value; }
         }
 
         public Entity() { }

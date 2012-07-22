@@ -159,50 +159,5 @@ namespace Poisson
                 this.SpriteRect, Color.White,
                 this.Orient, new Vector2(SpriteRect.Width/2, SpriteRect.Height/2), 1.0f, this.effects, 0.0f);
         }
-<<<<<<< HEAD
-
-        private void Autonomous(Entity player)
-        {
-            Vector2 delta  = player.Pos - Pos;
-            if (this.state == EFishState.STEERING)
-            {
-                if (delta.Length() >= 300.0)
-                {
-                    this.state = EFishState.SPONTANEOUS;
-                    Random random = new Random();
-                    this.target = new Vector2((float)random.NextDouble() * 800.0f, (float)random.NextDouble() * 480.0f);
-                }
-                else
-                {
-                    this.rotation = (float)Math.Atan2(player.Pos.Y - Pos.Y, player.Pos.X - Pos.X) % MathUtils.circle;
-                    this.flipX = (Pos.X < player.Pos.X);
-                    delta = -delta;
-                    delta.Normalize();
-                    this.Vel = delta * 10;
-                }
-            }
-            else if (this.state == EFishState.SPONTANEOUS)
-            {
-                Vector2 dprime = target - Pos;
-                if (delta.Length() <= 200.0)
-                {
-                    this.state = EFishState.STEERING;
-                }
-                else if (dprime.Length() <= 20.0)
-                {
-                    Random random = new Random();
-                    this.target = new Vector2((float)random.NextDouble() * 800.0f, (float)random.NextDouble() * 480.0f);
-                }
-                else
-                {
-                    this.rotation = (float)Math.Atan2(Pos.Y - target.Y, Pos.X - target.X) % MathUtils.circle;
-                    this.flipX = (Pos.X < target.X);
-                    dprime.Normalize();
-                    this.Vel = dprime * 3;
-                }
-            }
-        }
-=======
->>>>>>> c8ed20d8917b0c403585cef5e398161d0749984f
     }
 }

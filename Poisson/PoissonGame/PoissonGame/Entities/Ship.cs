@@ -7,18 +7,16 @@ namespace Poisson
     using System.Diagnostics;
     using Microsoft.Xna.Framework.Graphics;
     using Microsoft.Xna.Framework;
+using Poisson.Entities;
 
     class Ship : Entity
     {
-<<<<<<< HEAD
         enum EHookState
         {
             UP,
             DOWN,
             RETRACTED
         } //maybe different hook types later
-=======
->>>>>>> 2dd49fb56f252d08c2645e3455aba24ac7b76d43
 
         enum EShipState
         {
@@ -43,22 +41,9 @@ namespace Poisson
 
         private Entity hook;
 
-<<<<<<< HEAD
-        public Rectangle hookRect
-        {
-            get
-            {
-                return new Rectangle((int)hookPos.X + (int)Pos.X,
-                                     (int)Pos.Y + (int)hookPos.Y,
-                                      this._hookRect.Width,
-                                      this._hookRect.Width); //gross
-            }
-        }
-
         Vector2 hookPos;
         Texture2D hookSprite;
-=======
->>>>>>> 2dd49fb56f252d08c2645e3455aba24ac7b76d43
+
         Random rseed; //used for random interval hooking
 
         Vector2 shipDestination;
@@ -122,7 +107,7 @@ namespace Poisson
         private void setShipToHook()
         {
             float newHookDestination = (float)(200/3*(rseed.Next(0,3)+200));
-            this.hookDestination = new Vector2((float)(newHookDestination), this.Pos.Y);
+            //this.hookDestination = new Vector2((float)(newHookDestination), this.Pos.Y);
             this.shipState = EShipState.HOOKING;
         }
 
@@ -135,16 +120,12 @@ namespace Poisson
             switch (this.shipState) {
                 case EShipState.SEEKING:
                     break;
-<<<<<<< HEAD
                 case EShipState.WAITING:
                     break;
-=======
->>>>>>> 2dd49fb56f252d08c2645e3455aba24ac7b76d43
                 case EShipState.HOOKING:
                     break;
             }
 
-<<<<<<< HEAD
             if (shipState == EShipState.SEEKING) {
                 if (Math.Abs(this.Pos.X - this.shipDestination.X) < 10.0)
                 {
@@ -152,10 +133,7 @@ namespace Poisson
                 }
             }
 
-            if ((shipState == EShipState.WAITING) && (gameTime.TotalGameTime.TotalMilliseconds >= this.timeToNextHook)) {
-=======
             if ((shipState == EShipState.SEEKING) && (gameTime.TotalGameTime.TotalMilliseconds >= this.timeToNextHook)) {
->>>>>>> 2dd49fb56f252d08c2645e3455aba24ac7b76d43
                 setShipToHook();
             }
 
@@ -190,35 +168,24 @@ namespace Poisson
             this.hook.Render(gameTime, batch, cam);
             SpriteEffects spriteEffects = new SpriteEffects();
 
-<<<<<<< HEAD
-            if (!Facing)
-            {
+            if (!this.FacingLeft) {
                 spriteEffects = SpriteEffects.FlipHorizontally;
                 hookPos = new Vector2(ROD_OFFSET_FLIP, hookPos.Y);
             }
-            else
-            {
+            else {
                 hookPos = new Vector2(ROD_OFFSET, hookPos.Y);
-=======
+            }
             if (!FacingLeft) {
                 spriteEffects = SpriteEffects.FlipHorizontally;
                 this.hook.Pos = new Vector2(ROD_OFFSET_FLIP, this.hook.Pos.Y);
             } else {
                 this.hook.Pos = new Vector2(ROD_OFFSET, this.hook.Pos.Y);
->>>>>>> 2dd49fb56f252d08c2645e3455aba24ac7b76d43
             }
 
             Rectangle destRect = new Rectangle((int)this.Pos.X, (int)this.Pos.Y, (int)SpriteRect.Width, (int)SpriteRect.Height);
             batch.Draw(this.SpriteTexture, this.Pos,
                 this.SpriteRect, Color.White,
                 this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.4f);
-<<<<<<< HEAD
-
-            batch.Draw(this.hookSprite, this.Pos + this.hookPos,
-                _hookSpriteRect, Color.White,
-                this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.3f);
-=======
->>>>>>> 2dd49fb56f252d08c2645e3455aba24ac7b76d43
         }
     }
 }
