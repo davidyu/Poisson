@@ -75,11 +75,21 @@ using Poisson.Entities;
             }
             Debug.WriteLine("Destination " + newDestination);
             //determine ships destination
-            //if (newDestination < this.Pos.X) //FLIP THE SHIP TO FACE LEFT
-            //{
-            //    spriteEffects = SpriteEffects.FlipHorizontally;
-            //    hookPos = new Vector2(ROD_OFFSET_FLIP, hookPos.Y);
-            //}
+            if (newDestination < this.Pos.X) //FLIP THE SHIP TO FACE LEFT
+            {
+                if (FacingLeft) //ACTUALLY FACING RIGHT
+                {
+                    FacingLeft = false;
+                }
+            }
+            else
+            {
+                if (!FacingLeft)
+                {
+                    FacingLeft = true;
+                }
+            }
+
             if (newDestination < this.Pos.X) //SET VELOCITY
             {
                 this.Vel = new Vector2(-movingVel, 0.0f);
