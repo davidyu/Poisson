@@ -9,14 +9,14 @@ namespace Poisson.Entities
 
     class Hook : Entity
     {
-        enum EHookState {
+        public enum EHookState {
             MOVING,
             WAITING,
             GRABBED,
             RETRACTED
         } //maybe different hook types later
 
-        EHookState hookState;
+        public EHookState HookState { get; set; }
         int stateticks;
         bool hasFish;
 
@@ -41,7 +41,7 @@ namespace Poisson.Entities
             this.SpriteTexture = game.Content.Load<Texture2D>("Art/spritesheet");
             this.SpriteRect = new Rectangle(0, 255, 16, 22);
             this.bRect = new Rectangle(0, 0, 40, 40);
-            this.hookState = EHookState.RETRACTED;
+            this.HookState = EHookState.RETRACTED;
             
             this.stateticks = 0;
             this.hasFish = false;
@@ -49,7 +49,7 @@ namespace Poisson.Entities
 
         public override void Update(GameTime gameTime, List<Entity> entities, Entity player, Camera cam)
         {
-            switch (this.hookState) {
+            switch (this.HookState) {
                 case EHookState.RETRACTED:
                     break;
                 case EHookState.MOVING:
@@ -57,12 +57,12 @@ namespace Poisson.Entities
                 case EHookState.WAITING:
                     break;
             }
-            this.Pos += this.Vel;
+            //this.Pos += this.Vel;
 
             if (!this.hasFish) {
                 foreach (Fish fish in entities) {
                     if (this.IsCollided(fish)) {
-                        this.hookState = EHookState.GRABBED;
+                        this.HookState = EHookState.GRABBED;
                         fish.Hooked();
                     }
                 }

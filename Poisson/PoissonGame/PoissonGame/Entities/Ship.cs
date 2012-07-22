@@ -11,13 +11,6 @@ using Poisson.Entities;
 
     class Ship : Entity
     {
-        enum EHookState
-        {
-            UP,
-            DOWN,
-            RETRACTED
-        } //maybe different hook types later
-
         enum EShipState
         {
             SEEKING, //movin' around
@@ -39,10 +32,7 @@ using Poisson.Entities;
         const int ROD_OFFSET = 227;
         const int ROD_OFFSET_FLIP = 10;
 
-        private Entity hook;
-
-        Vector2 hookPos;
-        Texture2D hookSprite;
+        private Hook hook;
 
         Random rseed; //used for random interval hooking
 
@@ -62,6 +52,7 @@ using Poisson.Entities;
         {
             this.hook = new Hook();
             this.hook.Initialise(game);
+            this.hook.HookState = Hook.EHookState.MOVING;
 
             this.SpriteTexture = game.Content.Load<Texture2D>("Art/spritesheet");
             this.SpriteRect = new Rectangle(0, 0, 256, 164);
@@ -111,14 +102,13 @@ using Poisson.Entities;
             this.shipState = EShipState.HOOKING;
         }
 
-
-
         public override void Update(GameTime gameTime, List<Entity> entities, Entity player, Camera cam)
         {
             this.hook.Update(gameTime, entities, player, cam);
 
             switch (this.shipState) {
                 case EShipState.SEEKING:
+                    this.Vel = new Vector2(1.0f, 0.0f);
                     break;
                 case EShipState.WAITING:
                     break;
@@ -142,22 +132,30 @@ using Poisson.Entities;
                 this.FacingLeft = !this.FacingLeft;
             }
 
-            //switch (this.hookState) {
-            //    case EHookState.UP:
-            //        this.hookPos.Y -= BORING_HOOK_VEL;
-            //        if (this.hookPos.Y <= TOP_OF_ROD) {
-            //            this.hookState = EHookState.RETRACTED;
-            //            setShipToSeek(gameTime);
-            //        }
-            //        break;
-            //    case EHookState.DOWN:
-            //        this.hookPos.Y += BORING_HOOK_VEL;
-            //        if (this.hookPos.Y >= BOTTOM_OF_SCREEN)
-            //            this.hookState = EHookState.UP;
-            //        break;
-            //    case EHookState.RETRACTED:
-            //        break;
-            //}
+            if (!this.FacingLeft) {
+                this.hook.Pos = new Vector2(ROD_OFFSET_FLIP, this.hook.Pos.Y);
+            }
+            else {
+                this.hook.Pos = new Vector2(ROD_OFFSET, this.hook.Pos.Y);
+            } 
+            switch (this.hook.HookState) {
+                case Hook.EHookState.MOVING:
+                    Vector2 pos = this.hook.Pos;
+                    pos.Y -= BORING_HOOK_VEL;
+                    this.hook.Pos = pos;
+                    if (pos.Y <= TOP_OF_ROD) {
+                        this.hook.HookState = Hook.EHookState.RETRACTED;
+                        setShipToSeek(gameTime);
+                    }
+                    break;
+                //case Hook.EHookState.DOWN:
+                //    this.hookPos.Y += BORING_HOOK_VEL;
+                //    if (this.hookPos.Y >= BOTTOM_OF_SCREEN)
+                //        this.hookState = EHookState.UP;
+                //    break;
+                case Hook.EHookState.RETRACTED:
+                    break;
+            }
 
             this.Pos += this.Vel;
             this.Vel *= FRICTION;
@@ -170,10 +168,8 @@ using Poisson.Entities;
 
             if (!this.FacingLeft) {
                 spriteEffects = SpriteEffects.FlipHorizontally;
-                hookPos = new Vector2(ROD_OFFSET_FLIP, hookPos.Y);
             }
             else {
-                hookPos = new Vector2(ROD_OFFSET, hookPos.Y);
             }
             if (!FacingLeft) {
                 spriteEffects = SpriteEffects.FlipHorizontally;
