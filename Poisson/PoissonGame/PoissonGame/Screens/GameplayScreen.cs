@@ -10,69 +10,83 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
 
-namespace Poisson
+namespace Poisson.Screens
 {
-    /// <summary>
-    /// This is the class the handle the entire game
-    /// </summary>
-    public class GameplayScreen : GameScreen
+    class GameplayScreen : GameScreen
     {
-        #region Fields/Properties
+        GraphicsDeviceManager graphics;
+        SpriteBatch spriteBatch;
+        Camera camera;
+
+        int score = 0;
+        SpriteFont hudFont;
+
+        List<Entity> fishes;
+        List<Entity> ships;
+        List<Entity> seas;
+
+        Dictionary<string, Animation> animations = new Dictionary<string, Animation>();
 
 
-        SpriteFont font16px;
-        SpriteFont font36px;
+        Fish player; //player will also be fishes[0] upon init
 
-        Texture2D arrowTexture;
-        Texture2D background;
-        Texture2D controlstickBoundary;
-        Texture2D controlstick;
-        Texture2D beehiveTexture;
-        Texture2D smokeButton;
-        //ScoreBar smokeButtonScorebar;
-
-        Vector2 controlstickStartupPosition;
-        Vector2 controlstickBoundaryPosition;
-        Vector2 smokeButtonPosition;
-        Vector2 lastTouchPosition;
-
-        bool isSmokebuttonClicked;
-        bool drawArrow;
-        bool drawArrowInterval;
-        bool isInMotion;
-        bool isAtStartupCountDown;
-        bool isLevelEnd;
-        bool levelEnded;
-        bool isUserWon;
-        bool userTapToExit;
-
-        Dictionary<string, Animation> animations;
-
-        int amountOfSoldierBee;
-        int amountOfWorkerBee;
-        int arrowCounter;
-
-        //List<Beehive> beehives = new List<Beehive>();
-        //List<Bee> bees = new List<Bee>();
-
-        const string SmokeText = "Smoke";
-
-        TimeSpan gameElapsed;
-        TimeSpan startScreenTime;
-
-        //BeeKeeper beeKeeper;
-        //HoneyJar jar;
-        //Vat vat;
-
-        //DifficultyMode gameDifficultyLevel;
-
-        public bool IsStarted
+        public GameplayScreen()
         {
-            get
-            {
-                return !isAtStartupCountDown && !levelEnded;
-            }
         }
-       #endregion
+
+        public override void LoadContent() 
+        {
+            // Init GFX
+            float SCREEN_WIDTH = (float)graphics.GraphicsDevice.Viewport.Width;
+            float SCREEN_HEIGHT = (float)graphics.GraphicsDevice.Viewport.Height;
+
+            camera = new Camera(0.5f);
+
+            //this.projection = Matrix.CreateScale(SCREEN_WIDTH / 2560f, SCREEN_HEIGHT / 2400f, 1f);
+            Random random = new Random();
+            fishes = new List<Entity>();
+            hudFont = this.ScreenManager.Game.Content.Load<SpriteFont>("HUDFont");
+
+            ships = new List<Entity>();
+
+            player = new Fish(new Vector2(400f, 0f), 0.0f, true); //player is Poisson and has different graphic than regular fishies
+            fishes.Add(player); //player is always index 0
+
+            seas = new List<Entity>();
+
+            ships.Add(new Ship(new Vector2(100f, 50f), 0.0f));
+            
+            seas.Add(new Sea(new Vector2(0.0f, 150.0f), new Vector2(-10.0f, 0.0f), 0.39f));
+
+            for (int i = 0; i < 3; i++) {
+                fishes.Add(new Fish(new Vector2(random.Next(800), random.Next(480)), 0.0f, false)); //NEED TO INCLUDE MIniMUMS FOR THE SEA LATER
+            }
+                
+            foreach (Fish fish in fishes) {
+                fish.Initialise(this.ScreenManager.Game);
+            }
+
+            foreach (Ship ship in ships) {
+                ship.Initialise(this.ScreenManager.Game);
+            }
+
+            foreach (Sea sea in seas) {
+                sea.Initialise(this.ScreenManager.Game);
+            }
+
+            player.Initialise(this.ScreenManager.Game);
+        }
+
+        public override void UnloadContent() { }
+
+        public override void Update(GameTime gameTime)
+        {
+        }
+
+        public override void Draw(GameTime gameTime) 
+        {
+        }
+
+
     }
 }
