@@ -1,4 +1,4 @@
-namespace Poisson.Entities
+namespace Poisson
 {
     using System;
     using System.Collections.Generic;
@@ -7,7 +7,6 @@ namespace Poisson.Entities
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
     using Microsoft.Xna.Framework.Input.Touch;
-    using Poisson.Utility;
     using System.Diagnostics;
 
     class Fish : Entity
@@ -162,7 +161,8 @@ namespace Poisson.Entities
 
         public void Hooked() //do-me: implement actions when hooked
         {
-            
+            this.Orient = 90f;
+            this.Pos = new Vector2(0.0f, 0.0f);
         }
 
         public override void Render(GameTime gameTime, SpriteBatch batch, Camera cam)

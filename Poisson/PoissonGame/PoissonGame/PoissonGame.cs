@@ -13,7 +13,6 @@ namespace Poisson
     using Microsoft.Xna.Framework.Input.Touch;
     using Microsoft.Xna.Framework.Media;
     using System.Xml.Linq;
-    using Poisson.Entities;
 
     public class PoissonGame : Microsoft.Xna.Framework.Game
     {
@@ -131,11 +130,11 @@ namespace Poisson
         private void CheckCollisions()
         {
             // right now we only use one ship. Consider refactoring and using SAP when time comes to use multiple ships
-            foreach (Fish fish in fishes) {
-                if (fish.BoundingRect.Intersects((ships[0] as Ship).hookRect)) {
+            //foreach (Fish fish in fishes) {
+            //    if (fish.BoundingRect.Intersects((ships[0] as Ship).hookRect)) {
                     
-                }
-            }
+            //    }
+            //}
         }
 
         protected override void Draw(GameTime gameTime)

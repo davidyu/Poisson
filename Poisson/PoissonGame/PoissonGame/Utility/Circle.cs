@@ -1,5 +1,5 @@
 using Microsoft.Xna.Framework;
-namespace Poisson.Utility
+namespace Poisson
 {
     class Circle
     {

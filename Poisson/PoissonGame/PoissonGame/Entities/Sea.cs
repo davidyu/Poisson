@@ -1,4 +1,4 @@
-namespace Poisson.Entities
+namespace Poisson
 {
     using System;
     using System.Collections.Generic;
