@@ -74,7 +74,7 @@ namespace Poisson
             foreach (TouchLocation tl in tc) {
                 if (tl.State == TouchLocationState.Moved || tl.State == TouchLocationState.Pressed) {
                     Vector2 touchPos = cam.ScreenToWorld(tl.Position); //converted to camera pos
-                    SteerToward(touchPos, 0.2f);
+                    SteerToward(touchPos, 0.1f);
                     Thrust();
                 }
             }
@@ -141,31 +141,11 @@ namespace Poisson
             float ddeg = ((float)Math.Atan2(delta.Y, delta.X) + MathUtils.HALF_CIRCLE) % MathUtils.CIRCLE - this.Orient;
 
             if (Math.Abs(ddeg) < MathUtils.HALF_CIRCLE) {
-                this.AngVel = ddeg * intensity;
+                this.AngVel += ddeg * intensity;
             } else {
                 //take care of edge cases such as rotating at the edge from 0 to 360 or 360 to 0
                 float sign = Math.Sign(ddeg);
-                this.AngVel = -sign * (MathUtils.CIRCLE - sign * ddeg) * intensity;
-            }
-        }
-
-        private void SteerAwayFrom(Vector2 loc, float intensity)
-        {
-            Vector2 delta = Pos - loc;
-            delta.Normalize();
-
-            //get delta degrees (how much should I rotate?)
-            float ddeg = ((float)Math.Atan2(delta.Y, delta.X) + MathUtils.HALF_CIRCLE) % MathUtils.CIRCLE - this.Orient;
-
-            if (Math.Abs(ddeg) < MathUtils.HALF_CIRCLE)
-            {
-                this.AngVel = ddeg * intensity;
-            }
-            else
-            {
-                //take care of edge cases such as rotating at the edge from 0 to 360 or 360 to 0
-                float sign = Math.Sign(ddeg);
-                this.AngVel = -sign * (MathUtils.CIRCLE - sign * ddeg) * intensity;
+                this.AngVel += -sign * (MathUtils.CIRCLE - sign * ddeg) * intensity;
             }
         }
 
