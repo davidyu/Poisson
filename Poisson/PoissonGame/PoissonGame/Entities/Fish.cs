@@ -20,7 +20,7 @@ namespace Poisson
             WAIT
         }
 
-        private bool          flipX   = false;
+        private bool          flipY   = false;
         private SpriteEffects effects = SpriteEffects.None;
         private float         rotation = 0.0f;
         private EFishState    state = EFishState.STEERING;
@@ -65,7 +65,7 @@ namespace Poisson
 
         private void Thrust()
         {
-            this.Vel = 10 * new Vector2((float)Math.Cos(this.rotation), (float)Math.Sin(this.rotation));
+            this.Vel = 10 * new Vector2((float)Math.Cos(this.Orient + MathUtils.CIRCLE / 2), (float)Math.Sin(this.Orient + MathUtils.CIRCLE / 2));
         }
 
         private void PollInput(Camera cam)
@@ -74,41 +74,35 @@ namespace Poisson
             foreach (TouchLocation tl in tc) {
                 if (tl.State == TouchLocationState.Moved || tl.State == TouchLocationState.Pressed) {
                     Vector2 touchPos = cam.ScreenToWorld(tl.Position); //converted to camera pos
-                    MoveTowards(touchPos, 10);
+                    SteerToward(touchPos, 0.2f);
                     Thrust();
                 }
             }
         }
 
-        private void Autonomous(Entity player)
+        private void Autonomous(Entity player, Camera cam)
         {
             Vector2 delta = player.Pos - Pos;
             if (this.state == EFishState.STEERING)
             {
-                if (delta.Length() >= 200.0)
-                {
+                if (delta.Length() >= 400.0) {
                     this.state = EFishState.SPONTANEOUS;
-                    FindNewTarget();
-                }
-                else
-                {
-                    MoveAwayFrom(player.Pos, 10);
+                    FindNewTarget(cam);
+                } else {
+                    SteerToward(-player.Pos, 0.5f);
+                    Thrust();
                 }
             }
             else if (this.state == EFishState.SPONTANEOUS)
             {
                 Vector2 dprime = target - Pos;
-                if (delta.Length() <= 50.0)
-                {
+                if (delta.Length() <= 300.0) {
                     this.state = EFishState.STEERING;
-                }
-                else if (dprime.Length() <= 20.0)
-                {
-                    FindNewTarget();
-                }
-                else
-                {
-                    MoveTowards(target, 3);
+                } else if (dprime.Length() <= 20.0) {
+                    FindNewTarget(cam);
+                } else {
+                    SteerToward(target, 0.2f);
+                    Thrust();
                 }
             }
         }
@@ -118,45 +112,61 @@ namespace Poisson
             if (isHuman) {
                 PollInput(cam);
             } else {
-                Autonomous(player);
+                Autonomous(player, cam);
             }
             
             //common update code at the end
+            this.Orient = (this.Orient + MathUtils.CIRCLE) % MathUtils.CIRCLE; //clamp to 0 < Orient < 2pi
+            this.flipY = (this.Orient > MathUtils.QUARTER_CIRCLE && this.Orient < 3 * MathUtils.QUARTER_CIRCLE);
             this.AngVel *= ANG_FRICTION;
-            this.rotation += this.AngVel;
-            this.rotation %= 2 * MathUtils.circle;
+            this.Orient += this.AngVel;
+            
             
             this.Pos += this.Vel;
             this.Vel *= FRICTION;
         }
 
-        private void FindNewTarget()
+        private void FindNewTarget(Camera cam)
         {
             Random random = new Random();
-            this.target = new Vector2((float)random.NextDouble() * 800.0f, (float)random.NextDouble() * 480.0f);
+            this.target = cam.ScreenToWorld(new Vector2((float)random.NextDouble() * 800.0f, (float)random.NextDouble() * 480.0f));
         }
 
-        //do-me: MoveTowards and MoveAwayFrom are too similar! Refactor into one method!
-        private void MoveTowards(Vector2 loc, float intensity)
+        private void SteerToward(Vector2 loc, float intensity)
         {
             Vector2 delta = loc - Pos;
-            delta.X = (float)(Math.Cos(-rotation) * delta.X - Math.Sin(-rotation) * delta.Y);
-            delta.Y = (float)(Math.Sin(-rotation) * delta.X + Math.Cos(-rotation) * delta.Y);
             delta.Normalize();
-            this.AngVel += Math.Sign(delta.Y) * 0.1f;
 
-            this.flipX = (Pos.X < loc.X);
-            this.Orient = this.flipX ? (float)Math.Atan2(loc.Y - Pos.Y, loc.X - Pos.X) : (float)Math.Atan2(Pos.Y - loc.Y, Pos.X - loc.X);
-            //this.Vel = delta * intensity;
+            //get delta degrees (how much should I rotate?)
+            float ddeg = ((float)Math.Atan2(delta.Y, delta.X) + MathUtils.HALF_CIRCLE) % MathUtils.CIRCLE - this.Orient;
+
+            if (Math.Abs(ddeg) < MathUtils.HALF_CIRCLE) {
+                this.AngVel = ddeg * intensity;
+            } else {
+                //take care of edge cases such as rotating at the edge from 0 to 360 or 360 to 0
+                float sign = Math.Sign(ddeg);
+                this.AngVel = -sign * (MathUtils.CIRCLE - sign * ddeg) * intensity;
+            }
         }
 
-        private void MoveAwayFrom(Vector2 loc, float intensity)
+        private void SteerAwayFrom(Vector2 loc, float intensity)
         {
             Vector2 delta = Pos - loc;
-            this.AngVel = ((float)Math.Atan2(loc.Y - Pos.Y, loc.X - Pos.X) % MathUtils.circle - this.Orient) / 10;
-            this.flipX = (Pos.X < loc.X);
             delta.Normalize();
-            this.Vel = delta * intensity;
+
+            //get delta degrees (how much should I rotate?)
+            float ddeg = ((float)Math.Atan2(delta.Y, delta.X) + MathUtils.HALF_CIRCLE) % MathUtils.CIRCLE - this.Orient;
+
+            if (Math.Abs(ddeg) < MathUtils.HALF_CIRCLE)
+            {
+                this.AngVel = ddeg * intensity;
+            }
+            else
+            {
+                //take care of edge cases such as rotating at the edge from 0 to 360 or 360 to 0
+                float sign = Math.Sign(ddeg);
+                this.AngVel = -sign * (MathUtils.CIRCLE - sign * ddeg) * intensity;
+            }
         }
 
         public void Hooked() //do-me: implement actions when hooked
@@ -167,7 +177,7 @@ namespace Poisson
 
         public override void Render(GameTime gameTime, SpriteBatch batch, Camera cam)
         {
-            this.effects = this.flipX ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            this.effects = this.flipY ? SpriteEffects.FlipVertically : SpriteEffects.None;
             
             Rectangle destRect = new Rectangle((int)this.Pos.X, (int)this.Pos.Y, (int)SpriteRect.Width, (int)SpriteRect.Height);
             batch.Draw(this.SpriteTexture, this.Pos,

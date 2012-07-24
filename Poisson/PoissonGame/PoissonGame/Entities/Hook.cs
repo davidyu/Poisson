@@ -66,7 +66,7 @@ namespace Poisson.Entities
                 case EHookState.WAITING:
                     break;
             }
-            Debug.WriteLine(this.HookState.ToString());
+            //Debug.WriteLine(this.HookState.ToString());
             this.Pos += this.Vel;
 
             if (!this.hasFish) {

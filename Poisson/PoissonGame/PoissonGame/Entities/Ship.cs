@@ -72,7 +72,7 @@ namespace Poisson
             while (Math.Abs(newDestination - this.Pos.X) < 10) {
                 newDestination = (rseed.Next(0, 4) * 300 + 200);
             }
-            Debug.WriteLine("Destination " + newDestination);
+            //Debug.WriteLine("Destination " + newDestination);
             //determine ships destination
             if (newDestination < this.Pos.X) { //FLIP THE SHIP TO FACE LEFT
                 if (FacingLeft) { //ACTUALLY FACING RIGHT

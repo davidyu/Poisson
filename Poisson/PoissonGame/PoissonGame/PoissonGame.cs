@@ -59,7 +59,7 @@ namespace Poisson
 
             ships = new List<Entity>();
 
-            player = new Fish(new Vector2(400f, 0f), 0.0f, true); //player is Poisson and has different graphic than regular fishies
+            player = new Fish(new Vector2(600f, 200f), 6.28f, true); //player is Poisson and has different graphic than regular fishies
             fishes.Add(player); //player is always index 0
 
             seas = new List<Entity>();
@@ -68,8 +68,8 @@ namespace Poisson
             
             seas.Add(new Sea(new Vector2(0.0f, 150.0f), new Vector2(-10.0f, 0.0f), 0.39f));
 
-            for (int i = 0; i < 3; i++) {
-                fishes.Add(new Fish(new Vector2(random.Next(800), random.Next(480)), 0.0f, false)); //NEED TO INCLUDE MIniMUMS FOR THE SEA LATER
+            for (int i = 0; i < 20; i++) {
+                fishes.Add(new Fish(camera.ScreenToWorld(new Vector2(random.Next(800), random.Next(480))), 0.0f, false)); //NEED TO INCLUDE MIniMUMS FOR THE SEA LATER
             }
                 
             foreach (Fish fish in fishes) {
