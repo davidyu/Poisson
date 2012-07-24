@@ -22,7 +22,6 @@ namespace Poisson
 
         private bool          flipY   = false;
         private SpriteEffects effects = SpriteEffects.None;
-        private float         rotation = 0.0f;
         private EFishState    state = EFishState.STEERING;
         private Vector2       target = new Vector2(0, 0);
 
@@ -115,15 +114,13 @@ namespace Poisson
                 Autonomous(player, cam);
             }
             
-            //common update code at the end
             this.Orient = (this.Orient + MathUtils.CIRCLE) % MathUtils.CIRCLE; //clamp to 0 < Orient < 2pi
             this.flipY = (this.Orient > MathUtils.QUARTER_CIRCLE && this.Orient < 3 * MathUtils.QUARTER_CIRCLE);
             this.AngVel *= ANG_FRICTION;
-            this.Orient += this.AngVel;
-            
-            
-            this.Pos += this.Vel;
             this.Vel *= FRICTION;
+
+            this.Orient += this.AngVel;
+            this.Pos += this.Vel;
         }
 
         private void FindNewTarget(Camera cam)
@@ -151,7 +148,7 @@ namespace Poisson
 
         public void Hooked() //do-me: implement actions when hooked
         {
-            this.Orient = 90f;
+            this.Orient = MathUtils.QUARTER_CIRCLE;
             this.Pos = new Vector2(0.0f, 0.0f);
         }
 
