@@ -73,13 +73,15 @@ namespace Poisson.Entities
                 foreach (Fish fish in entities) {
                     if (this.IsCollided(fish)) {
                         this.HookState = EHookState.MOVING;
-                        fish.Hooked();
+                        fish.Hooked(this);
+                        this.hasFish = true;
                     }
                 }
             }
 
             if (this.IsCollided(player)) {
-                ((Fish)player).Hooked();
+                ((Fish)player).Hooked(this);
+                this.hasFish = true;
             }
         }
 

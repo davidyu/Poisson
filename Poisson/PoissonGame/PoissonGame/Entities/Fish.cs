@@ -30,6 +30,8 @@ namespace Poisson
         public bool inRoutine { get; set;}
         GameTime routineStartTime {get; set;}
         Vector2 targetPoint {get; set; }
+
+        private bool hooked = false;
         
         public bool isHuman { get; set; }
 
@@ -108,6 +110,9 @@ namespace Poisson
 
         public override void Update(GameTime gameTime, List<Entity> entities, Entity player, Camera cam)
         {
+            if (this.hooked)
+                return;
+
             if (isHuman) {
                 PollInput(cam);
             } else {
@@ -146,10 +151,11 @@ namespace Poisson
             }
         }
 
-        public void Hooked() //do-me: implement actions when hooked
+        public void Hooked(Entity h) //do-me: implement actions when hooked
         {
             this.Orient = MathUtils.QUARTER_CIRCLE;
-            this.Pos = new Vector2(0.0f, 0.0f);
+            this.Pos = h.Pos;
+            this.hooked = true;
         }
 
         public override void Render(GameTime gameTime, SpriteBatch batch, Camera cam)
