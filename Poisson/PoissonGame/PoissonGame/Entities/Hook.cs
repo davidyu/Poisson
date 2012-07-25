@@ -20,6 +20,7 @@ namespace Poisson.Entities
         public EHookState HookState { get; set; }
         int stateticks;
         bool hasFish;
+        Fish hookedFish;
         public float HookDepthDestination { get; set; }
 
         public Rectangle HookRect
@@ -59,6 +60,7 @@ namespace Poisson.Entities
                 case EHookState.MOVING:
                     this.Vel = new Vector2(0f, 3f);
                     if (this.Pos.Y > HookDepthDestination) {
+                        Debug.WriteLine("ha!");
                         this.HookState = EHookState.WAITING;
                         this.Vel = Vector2.Zero;
                     }
@@ -69,20 +71,35 @@ namespace Poisson.Entities
             //Debug.WriteLine(this.HookState.ToString());
             this.Pos += this.Vel;
 
-            if (!this.hasFish) {
-                foreach (Fish fish in entities) {
-                    if (this.IsCollided(fish)) {
+            if (!this.hasFish)
+            {
+                foreach (Fish fish in entities)
+                {
+                    if (this.IsCollided(fish))
+                    {
                         this.HookState = EHookState.MOVING;
                         fish.Hooked(this);
                         this.hasFish = true;
+                        this.hookedFish = fish;
+                        //this.HookState = EHookState.GRABBED;
                     }
                 }
+
+                if (this.IsCollided(player))
+                {
+                    ((Fish)player).Hooked(this);
+                    this.hasFish = true;
+                    this.hookedFish = (Fish)player;
+                    //this.HookState = EHookState.GRABBED;
+                }
+            }
+            else //this.hasFish
+            {
+                this.hookedFish.Hooked(this);
             }
 
-            if (this.IsCollided(player)) {
-                ((Fish)player).Hooked(this);
-                this.hasFish = true;
-            }
+
+            
         }
 
         public override void Render(GameTime gameTime, SpriteBatch batch, Camera cam)
