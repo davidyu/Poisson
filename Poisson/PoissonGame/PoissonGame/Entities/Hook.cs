@@ -60,7 +60,6 @@ namespace Poisson.Entities
                 case EHookState.MOVING:
                     this.Vel = new Vector2(0f, 3f);
                     if (this.Pos.Y > HookDepthDestination) {
-                        Debug.WriteLine("ha!");
                         this.HookState = EHookState.WAITING;
                         this.Vel = Vector2.Zero;
                     }
