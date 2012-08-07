@@ -72,8 +72,8 @@
     <Compile Include="Entities\Sea.cs" />
     <Compile Include="Entities\Ship.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScreenManager\GameScreen.cs" />
-    <Compile Include="ScreenManager\ScreenManager.cs" />
+    <Compile Include="ScreenManagement\GameScreen.cs" />
+    <Compile Include="ScreenManagement\ScreenManager.cs" />
     <Compile Include="Screens\GameplayScreen.cs" />
     <Compile Include="Utility\Animation.cs" />
     <Compile Include="Utility\AudioManager.cs" />

@@ -11,17 +11,19 @@ namespace Poisson.Entities
     class Hook : Entity
     {
         public enum EHookState {
-            MOVING,
+            MOVINGDOWN,
+            MOVINGUP,
             WAITING,
             GRABBED,
             RETRACTED
         } //maybe different hook types later
 
         public EHookState HookState { get; set; }
-        int stateticks;
+        double waitTime;
         bool hasFish;
         Fish hookedFish;
         public float HookDepthDestination { get; set; }
+        public Ship Ship { get; set; }
 
         public Rectangle HookRect
         {
@@ -34,9 +36,10 @@ namespace Poisson.Entities
             }
         }
 
-        public Hook()
+        public Hook(Ship ship)
             : base()
         {
+            this.Ship = ship;
         }
 
         public override void Initialise(Game game)
@@ -46,7 +49,6 @@ namespace Poisson.Entities
             this.bRect = new Rectangle(0, 0, 40, 40);
             this.HookState = EHookState.RETRACTED;
             
-            this.stateticks = 0;
             this.hasFish = false;
             this.HookDepthDestination = 500f;
             this.Vel = Vector2.Zero;
@@ -56,15 +58,30 @@ namespace Poisson.Entities
         {
             switch (this.HookState) {
                 case EHookState.RETRACTED:
+                    if (this.hookedFish != null) {
+                        this.hookedFish.Kill();
+                        this.hasFish = false;
+                    }
+                    this.HookState = EHookState.MOVINGDOWN;
                     break;
-                case EHookState.MOVING:
+                case EHookState.MOVINGDOWN:
                     this.Vel = new Vector2(0f, 3f);
                     if (this.Pos.Y > HookDepthDestination) {
                         this.HookState = EHookState.WAITING;
+                        this.waitTime = gameTime.TotalGameTime.TotalSeconds + 5.0;
+                        this.Vel = Vector2.Zero;
+                    }
+                    break;
+                case EHookState.MOVINGUP:
+                    this.Vel = new Vector2(0f, -3f);
+                    if (this.Pos.Y < 40) {
+                        this.HookState = EHookState.RETRACTED;
                         this.Vel = Vector2.Zero;
                     }
                     break;
                 case EHookState.WAITING:
+                    if (this.waitTime > gameTime.TotalGameTime.TotalSeconds)
+                        this.HookState = EHookState.MOVINGUP;
                     break;
             }
             //Debug.WriteLine(this.HookState.ToString());
@@ -76,7 +93,7 @@ namespace Poisson.Entities
                 {
                     if (this.IsCollided(fish))
                     {
-                        this.HookState = EHookState.MOVING;
+                        this.HookState = EHookState.MOVINGUP;
                         fish.Hooked(this);
                         this.hasFish = true;
                         this.hookedFish = fish;
@@ -96,9 +113,6 @@ namespace Poisson.Entities
             {
                 this.hookedFish.Hooked(this);
             }
-
-
-            
         }
 
         public override void Render(GameTime gameTime, SpriteBatch batch, Camera cam)

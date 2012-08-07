@@ -12,7 +12,7 @@ namespace Poisson
     class Fish : Entity
     {
         //not yet implemented: random AI behavior for non-human fishes
-        enum EFishState {
+        public enum EFishState {
             STEERING,     //follow Poisson! Poisson is perpetually in this mode
             SPONTANEOUS,  //random movement
             HOOKED,       //Jimmy John got you, you poor thing
@@ -20,9 +20,11 @@ namespace Poisson
             WAIT
         }
 
+        public EFishState State { get; set; }
+
+        private const float SEA_LEVEL = 205f;
         private bool          flipY   = false;
-        private SpriteEffects effects = SpriteEffects.None;
-        private EFishState    state = EFishState.STEERING;
+        private SpriteEffects effects = SpriteEffects.None; 
         private Vector2       target = new Vector2(0, 0);
 
         const float FRICTION = 0.90f;
@@ -54,10 +56,10 @@ namespace Poisson
 
             if (this.isHuman) {
                 this.SpriteRect = new Rectangle(0, 164, 111, 64);
-                this.state = EFishState.STEERING;
+                this.State = EFishState.STEERING;
             } else {
                 this.SpriteRect = new Rectangle(0, 228, 45, 28);
-                this.state = EFishState.SPONTANEOUS;
+                this.State = EFishState.SPONTANEOUS;
             }
 
             this.BoundingRect = new Rectangle(0, 0, 164, 64);
@@ -66,7 +68,10 @@ namespace Poisson
 
         private void Thrust()
         {
-            this.Vel = 10 * new Vector2((float)Math.Cos(this.Orient + MathUtils.CIRCLE / 2), (float)Math.Sin(this.Orient + MathUtils.CIRCLE / 2));
+            if (this.Pos.Y < SEA_LEVEL)
+                return;
+            this.Vel = 10 * new Vector2((float)Math.Cos(this.Orient + MathUtils.CIRCLE / 2), 
+                                        (float)Math.Sin(this.Orient + MathUtils.CIRCLE / 2));
         }
 
         private void PollInput(Camera cam)
@@ -84,21 +89,21 @@ namespace Poisson
         private void Autonomous(Entity player, Camera cam)
         {
             Vector2 delta = player.Pos - Pos;
-            if (this.state == EFishState.STEERING)
+            if (this.State == EFishState.STEERING)
             {
                 if (delta.Length() >= 400.0) {
-                    this.state = EFishState.SPONTANEOUS;
+                    this.State = EFishState.SPONTANEOUS;
                     FindNewTarget(cam);
                 } else {
                     SteerToward(-player.Pos, 0.5f);
                     Thrust();
                 }
             }
-            else if (this.state == EFishState.SPONTANEOUS)
+            else if (this.State == EFishState.SPONTANEOUS)
             {
                 Vector2 dprime = target - Pos;
                 if (delta.Length() <= 300.0) {
-                    this.state = EFishState.STEERING;
+                    this.State = EFishState.STEERING;
                 } else if (dprime.Length() <= 20.0) {
                     FindNewTarget(cam);
                 } else {
@@ -125,7 +130,19 @@ namespace Poisson
             this.Vel *= FRICTION;
 
             this.Orient += this.AngVel;
+            if (this.Pos.Y < SEA_LEVEL)
+                this.Vel += new Vector2(0f, 2f);
             this.Pos += this.Vel;
+        }
+
+        public override void Render(GameTime gameTime, SpriteBatch batch, Camera cam)
+        {
+            this.effects = this.flipY ? SpriteEffects.FlipVertically : SpriteEffects.None;
+            
+            Rectangle destRect = new Rectangle((int)this.Pos.X, (int)this.Pos.Y, (int)SpriteRect.Width, (int)SpriteRect.Height);
+            batch.Draw(this.SpriteTexture, this.Pos,
+                this.SpriteRect, Color.White,
+                this.Orient, new Vector2((float) SpriteRect.Width/2, SpriteRect.Height/2), 1.0f, this.effects, 0.0f);
         }
 
         private void FindNewTarget(Camera cam)
@@ -144,7 +161,8 @@ namespace Poisson
 
             if (Math.Abs(ddeg) < MathUtils.HALF_CIRCLE) {
                 this.AngVel += ddeg * intensity;
-            } else {
+            }
+            else {
                 //take care of edge cases such as rotating at the edge from 0 to 360 or 360 to 0
                 float sign = Math.Sign(ddeg);
                 this.AngVel += -sign * (MathUtils.CIRCLE - sign * ddeg) * intensity;
@@ -158,14 +176,9 @@ namespace Poisson
             this.hooked = true;
         }
 
-        public override void Render(GameTime gameTime, SpriteBatch batch, Camera cam)
+        public void Kill()
         {
-            this.effects = this.flipY ? SpriteEffects.FlipVertically : SpriteEffects.None;
-            
-            Rectangle destRect = new Rectangle((int)this.Pos.X, (int)this.Pos.Y, (int)SpriteRect.Width, (int)SpriteRect.Height);
-            batch.Draw(this.SpriteTexture, this.Pos,
-                this.SpriteRect, Color.White,
-                this.Orient, new Vector2((float) SpriteRect.Width/2, SpriteRect.Height/2), 1.0f, this.effects, 0.0f);
+            this.State = EFishState.DEAD;
         }
     }
 }

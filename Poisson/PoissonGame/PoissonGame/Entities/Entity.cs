@@ -9,7 +9,7 @@ namespace Poisson
 
     class Entity
     {
-        public Vector2 Pos { get; set; }  
+        public Vector2 Pos { get; set; }
         public Vector2 Vel { get; set; }
         public float Orient { get; set; }
         public float AngVel { get; set; }

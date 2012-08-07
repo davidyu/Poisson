@@ -50,9 +50,9 @@ namespace Poisson
 
         public override void Initialise(Game game)
         {
-            this.hook = new Hook();
+            this.hook = new Hook(this);
             this.hook.Initialise(game);
-            this.hook.HookState = Hook.EHookState.MOVING;
+            this.hook.HookState = Hook.EHookState.MOVINGDOWN;
 
             this.SpriteTexture = game.Content.Load<Texture2D>("Art/spritesheet");
             this.SpriteRect = new Rectangle(0, 0, 256, 164);
