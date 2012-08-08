@@ -75,7 +75,10 @@ namespace Poisson
         #endregion
 
         #region Public Methods
-
+        public void ScreenExit() 
+        {
+            this.ScreenManager.PopScreen();
+        }
         #endregion
 
         #region Helper Methods

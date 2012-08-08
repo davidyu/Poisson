@@ -22,6 +22,7 @@ namespace Poisson.Screens
         List<Entity> fishes;
         List<Entity> ships;
         List<Entity> seas;
+        int livesLeft;
 
         Dictionary<string, Animation> animations = new Dictionary<string, Animation>();
 
@@ -40,10 +41,12 @@ namespace Poisson.Screens
             Random random = new Random();
             fishes = new List<Entity>();
             hudFont = this.ScreenManager.Game.Content.Load<SpriteFont>("HUDFont");
+            livesLeft = 5;
 
             ships = new List<Entity>();
 
             player = new Fish(new Vector2(0f, 0f), 0.0f, true); //player is Poisson and has different graphic than regular fishies
+            player.THRUST_SPEED = 10f;
             fishes.Add(player); //player is always index 0
 
             seas = new List<Entity>();
@@ -67,8 +70,6 @@ namespace Poisson.Screens
             foreach (Sea sea in seas) {
                 sea.Initialise(this.ScreenManager.Game);
             }
-
-            player.Initialise(this.ScreenManager.Game);
         }
 
         public override void UnloadContent() { }
@@ -76,12 +77,10 @@ namespace Poisson.Screens
         public override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed) {
-                //this.ScreeExit();
+                this.ScreenExit();
             }
 
             score = (int)gameTime.TotalGameTime.TotalMilliseconds * 7;
-
-            CheckCollisions();
 
             List<Fish> toRemove = new List<Fish>();
             foreach (Fish fish in this.fishes) {  
@@ -91,8 +90,8 @@ namespace Poisson.Screens
             }
             foreach (Fish fish in toRemove) {
                 this.fishes.Remove(fish);
+                --this.livesLeft;
             }
-            
 
             foreach (Ship ship in ships) {
                 ship.Update(gameTime, fishes, player, this.camera);
@@ -100,6 +99,11 @@ namespace Poisson.Screens
 
             foreach (Sea sea in this.seas) {
                 sea.Update(gameTime, fishes, player, this.camera);
+            }
+
+            if (this.livesLeft <= 0) {
+                //this.ScreenManager.PopScreen();
+                //this.ScreenManager.PushScreen(new 
             }
     
         }
@@ -125,16 +129,6 @@ namespace Poisson.Screens
             }
 
             this.ScreenManager.SpriteBatch.End();
-        }
-
-        private void CheckCollisions()
-        {
-            // right now we only use one ship. Consider refactoring and using SAP when time comes to use multiple ships
-            //foreach (Fish fish in fishes) {
-            //    if (fish.BoundingRect.Intersects((ships[0] as Ship).hookRect)) {
-
-            //    }
-            //}
         }
 
 

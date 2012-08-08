@@ -49,14 +49,13 @@ namespace Poisson
         {
             base.Initialize();
             this.screenManager = new ScreenManager(this);
-            this.screenManager.PushScreen(new GameplayScreen());
+            this.screenManager.PushScreen(new MainMenuScreen());
             
         }
 
         protected override void LoadContent()
         {
             base.LoadContent();
-            
         }
 
         protected override void UnloadContent()

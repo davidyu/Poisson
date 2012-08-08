@@ -25,6 +25,8 @@ namespace Poisson.Entities
         public float HookDepthDestination { get; set; }
         public Ship Ship { get; set; }
 
+        public Texture2D rect;
+
         public Rectangle HookRect
         {
             get
@@ -46,12 +48,17 @@ namespace Poisson.Entities
         {
             this.SpriteTexture = game.Content.Load<Texture2D>("Art/spritesheet");
             this.SpriteRect = new Rectangle(0, 255, 16, 22);
-            this.bRect = new Rectangle(0, 0, 40, 40);
+            this.BoundingRect = new Rectangle(0, 0, 40, 40);
             this.HookState = EHookState.RETRACTED;
             
             this.hasFish = false;
             this.HookDepthDestination = 500f;
             this.Vel = Vector2.Zero;
+
+            this.rect = new Texture2D(game.GraphicsDevice, bRect.Width, bRect.Height);
+            Color[] data = new Color[bRect.Width * bRect.Height];
+            for (int i = 0; i < data.Length; ++i) data[i] = Color.Chocolate;
+            this.rect.SetData(data);
         }
 
         public override void Update(GameTime gameTime, List<Entity> entities, Entity player, Camera cam)
@@ -61,6 +68,7 @@ namespace Poisson.Entities
                     if (this.hookedFish != null) {
                         this.hookedFish.Kill();
                         this.hasFish = false;
+                        this.hookedFish = null;
                     }
                     this.HookState = EHookState.MOVINGDOWN;
                     break;
@@ -91,12 +99,13 @@ namespace Poisson.Entities
             {
                 foreach (Fish fish in entities)
                 {
-                    if (this.IsCollided(fish))
+                    if (this.IsCollided(fish) && fish.State != Fish.EFishState.HOOKED)
                     {
                         this.HookState = EHookState.MOVINGUP;
                         fish.Hooked(this);
                         this.hasFish = true;
                         this.hookedFish = fish;
+                        break;
                         //this.HookState = EHookState.GRABBED;
                     }
                 }
@@ -122,6 +131,8 @@ namespace Poisson.Entities
             batch.Draw(this.SpriteTexture, this.Pos,
                 this.SpriteRect, Color.White,
                 this.Orient, new Vector2(0f, 0f), 1.0f, spriteEffects, 0.2f);
+
+            batch.Draw(this.rect, this.Pos, Color.White);
         }
 
         private bool IsCollided(Entity entity)

@@ -23,6 +23,7 @@ namespace Poisson
         public EFishState State { get; set; }
 
         private const float SEA_LEVEL = 205f;
+        public float THRUST_SPEED = 3.5f;
         private bool          flipY   = false;
         private SpriteEffects effects = SpriteEffects.None; 
         private Vector2       target = new Vector2(0, 0);
@@ -32,6 +33,8 @@ namespace Poisson
         public bool inRoutine { get; set;}
         GameTime routineStartTime {get; set;}
         Vector2 targetPoint {get; set; }
+
+        Texture2D rect;
 
         private bool hooked = false;
         
@@ -62,15 +65,24 @@ namespace Poisson
                 this.State = EFishState.SPONTANEOUS;
             }
 
-            this.BoundingRect = new Rectangle(0, 0, 164, 64);
+            if (this.isHuman)
+                this.BoundingRect = new Rectangle(-this.SpriteRect.Width / 2, -this.SpriteRect.Height / 2, 100, 50);
+            else
+                this.BoundingRect = new Rectangle(-this.SpriteRect.Width/2, -this.SpriteRect.Height/2, 50, 35);
+
             this.AngVel = 0.0f;
+
+            this.rect = new Texture2D(game.GraphicsDevice, bRect.Width, bRect.Height);
+            Color[] data = new Color[bRect.Width * bRect.Height];
+            for (int i = 0; i < data.Length; ++i) data[i] = Color.Chocolate;
+            this.rect.SetData(data);
         }
 
         private void Thrust()
         {
             if (this.Pos.Y < SEA_LEVEL)
                 return;
-            this.Vel = 10 * new Vector2((float)Math.Cos(this.Orient + MathUtils.CIRCLE / 2), 
+            this.Vel = THRUST_SPEED * new Vector2((float)Math.Cos(this.Orient + MathUtils.CIRCLE / 2), 
                                         (float)Math.Sin(this.Orient + MathUtils.CIRCLE / 2));
         }
 
@@ -95,7 +107,7 @@ namespace Poisson
                     this.State = EFishState.SPONTANEOUS;
                     FindNewTarget(cam);
                 } else {
-                    SteerToward(-player.Pos, 0.5f);
+                    SteerToward(player.Pos, 0.5f);
                     Thrust();
                 }
             }
@@ -115,7 +127,7 @@ namespace Poisson
 
         public override void Update(GameTime gameTime, List<Entity> entities, Entity player, Camera cam)
         {
-            if (this.hooked)
+            if (this.hooked || this.State == EFishState.DEAD)
                 return;
 
             if (isHuman) {
@@ -143,6 +155,7 @@ namespace Poisson
             batch.Draw(this.SpriteTexture, this.Pos,
                 this.SpriteRect, Color.White,
                 this.Orient, new Vector2((float) SpriteRect.Width/2, SpriteRect.Height/2), 1.0f, this.effects, 0.0f);
+            batch.Draw(this.rect, new Vector2(this.BoundingRect.X, this.BoundingRect.Y), Color.White);
         }
 
         private void FindNewTarget(Camera cam)
@@ -171,6 +184,8 @@ namespace Poisson
 
         public void Hooked(Entity h) //do-me: implement actions when hooked
         {
+            if (this.State != EFishState.DEAD)
+                this.State = EFishState.HOOKED;
             this.Orient = MathUtils.QUARTER_CIRCLE;
             this.Pos = h.Pos;
             this.hooked = true;
